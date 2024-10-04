@@ -8,9 +8,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+      
+        'one': '#FF6500',
+        'two': '#1E3E62',
+        'three': '#0B192C',
+        'Four': '#000000',
+       
       },
+      fontFamily: {
+        font: ['Montserrat',],
+       },
     },
   },
   plugins: [],
