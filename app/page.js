@@ -1,15 +1,9 @@
 import Image from "next/image";
-import Navbar from "./components/Navbar";
-import Cta from "./components/Cta";
-import Footer from "./components/Footer";
-import Features from "./components/Features";
+import Homepage from "./Home";
 export default function Home() {
   return (
     <div className>
-      <Navbar />
-      <Cta/>
-       <Features />
-      <Footer />
+    <Homepage/>
      
     </div>
   );
