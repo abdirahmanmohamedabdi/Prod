@@ -64,7 +64,7 @@ export default function Navbar() {
             </div>
             
             <Popover.Group as="nav" className="hidden md:flex space-x-10">
-            <a href="#" className="text-base  font-font font-medium text-four hover:text-gray-900">
+            <a href="/" className="text-base  font-font font-medium text-four hover:text-gray-900">
                 Home
               </a>
               <Popover className="relative">
@@ -121,7 +121,7 @@ export default function Navbar() {
                 )}
               </Popover>
 
-              <a href="#" className="text-base font-font font-medium text-four hover:text-gray-900">
+              <a href="/Recipes" className="text-base font-font font-medium text-four hover:text-gray-900">
                 Popular Recipes
               </a>
            
@@ -188,10 +188,10 @@ export default function Navbar() {
                 </div>
                 <div className="py-6 px-5">
                   <div className="grid grid-cols-2 gap-4">
-                    <a href="#" className="text-base  font-font font-medium text-four hover:text-gray-700">
+                    <a href="/" className="text-base  font-font font-medium text-four hover:text-gray-700">
                       Home
                     </a>
-                    <a href="#" className="text-base font-medium font-font text-four hover:text-gray-700">
+                    <a href="/Recipes" className="text-base font-medium font-font text-four hover:text-gray-700">
                       Popular Recipes
                     </a>
                     
