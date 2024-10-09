@@ -1,20 +1,15 @@
-import localFont from "next/font/local";
 import "./globals.css";
+import { SessionProvider } from 'next-auth/react';
+import localFont from 'next/font/local';
 import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-export const metadata = {
-  title: "Pishipoa",
-  description: "PishiPoa is your go-to platform for discovering, sharing, and exploring mouthwatering recipes",
-};
-
-export default function RootLayout({ children }) {
+export default function Layout({ children, pageProps = {} }) {
   return (
-    <html lang="en">
+    <html>
       <body>
-        <Navbar />
-      
+        <SessionProvider session={pageProps.session}>
+        <Navbar/>
         {children}
-        <Footer />
+        </SessionProvider>
       </body>
     </html>
   );
