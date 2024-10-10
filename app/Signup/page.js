@@ -1,6 +1,33 @@
+"use client"
 import React from "react";
 import { doSocialLogin } from "../actions";
-const LoginForm = () => {
+import { useRouter } from "next/navigation";
+const SignUp = () => {
+  const router = useRouter();
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    try {
+      const formData = new FormData(event.currentTarget);
+
+      const name = formData.get("name");
+      const email = formData.get("email");
+      const password = formData.get("password");
+
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+      
+      response.status === 201  && router.push('/Login')
+      
+    } catch (e) {
+      console.error(e.message)
+    }
+    }
   return (
     <div>
       <div className="min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -11,26 +38,44 @@ const LoginForm = () => {
             alt="Workflow"
           />
           <h2 className="mt-6 text-center text-3xl font-font font-extrabold text-gray-900">
-            Sign in to your account
+            Sign up for an account
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="mt-2 text-center text-sm font-font text-gray-600">
             Or{" "}
             <a
-              href="#"
-              className="font-medium text-one hover:text-indigo-500"
+              href="/Login"
+              className="font-medium text-one font-font hover:text-indigo-500"
             >
-              Sign Up
+              Sign In
             </a>
           </p>
         </div>
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            <form className="space-y-6" action="#" method="POST">
+            <form className="space-y-6" onSubmit={handleSubmit} >
+            <div>
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-font font-medium text-gray-700"
+                >
+                  Name
+                </label>
+                <div className="mt-1">
+                  <input
+                    id="name"
+                    name="name"
+                    type="name"
+                    autoComplete="name"
+                    required
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  />
+                </div>
+              </div>
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-font font-medium text-gray-700"
                 >
                   Email address
                 </label>
@@ -49,7 +94,7 @@ const LoginForm = () => {
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-font font-medium text-gray-700"
                 >
                   Password
                 </label>
@@ -70,9 +115,9 @@ const LoginForm = () => {
               <div>
                 <button
                   type="submit"
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="w-full flex justify-center py-2 px-4 font-font border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-two hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
-                  Sign in
+                  Sign up
                 </button>
               </div>
             </form>
@@ -83,12 +128,12 @@ const LoginForm = () => {
                   <div className="w-full border-t border-gray-300" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">
+                  <span className="px-2 bg-white font-font text-gray-500">
                     Or continue with
                   </span>
                 </div>
               </div>
-              <form action={doSocialLogin}>
+              <form action={doSocialLogin} >
                 <div className="mt-6 grid grid-cols-2 gap-2">
                   <div>
                     <button
@@ -170,4 +215,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default SignUp;
