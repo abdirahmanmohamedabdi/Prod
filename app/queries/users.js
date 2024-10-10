@@ -1,4 +1,4 @@
-import User from '../models/user';
+import { User } from "@/app/model/user-model";
 
 export async function createUser(user) {
     try{
