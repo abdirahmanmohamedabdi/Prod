@@ -1,6 +1,6 @@
 
 import { ExternalLinkIcon } from '@heroicons/react/solid'
-
+import Link from 'next/link'
 export default function Cta() {
   return (
     <div className="relative bg-gray-800">
@@ -20,13 +20,13 @@ export default function Cta() {
           </p>
           <div className="mt-8">
             <div className="inline-flex rounded-md shadow">
-              <a
+              <Link
                 href="#"
                 className="inline-flex items-center justify-center px-5 py-3 border border-transparent font-font text-base font-medium rounded-md text-white bg-one hover:bg-three"
               >
                 Ready to Get Cooking?
                 <ExternalLinkIcon className="-mr-1 ml-3 h-5 w-5 text-white" aria-hidden="true" />
-              </a>
+              </Link>
             </div>
           </div>
         </div>
