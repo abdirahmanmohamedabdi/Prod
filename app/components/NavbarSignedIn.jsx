@@ -2,9 +2,9 @@
 import { Fragment } from 'react'
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
+import UserIcon from '@heroicons/react/solid';
 import { Popover, Transition } from '@headlessui/react'
 import {
-
   MenuIcon,
   HeartIcon,
   ViewListIcon,
@@ -14,6 +14,8 @@ import {
 } from '@heroicons/react/outline'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import Logout from './Logout';
+import Link from 'next/link';
+
 const recipes = [
   {
     name: 'Add a Recipe',
@@ -35,13 +37,14 @@ const recipes = [
     icon: ShareIcon,
   },
 ]
-import Link from 'next/link';
+
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
 export default function NavbarSignedIn() {
- const { data:session } = useSession();
+  const { data: session, status } = useSession();
+
   return (
     <div className="bg-white">
       <header>
@@ -53,13 +56,12 @@ export default function NavbarSignedIn() {
                 <img
                   className="h-12 w-auto sm:h-10"
                   src="/logo2.png"
-                  alt=""
+                  alt="Pishipoa"
                 />
               </a>
             </div>
           
             <div className="-mr-2 -my-2 md:hidden">
-              
               <Popover.Button className="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 ">
                 <span className="sr-only">Open menu</span>
                 <MenuIcon className="h-6 w-6" aria-hidden="true" />
@@ -67,7 +69,7 @@ export default function NavbarSignedIn() {
             </div>
             
             <Popover.Group as="nav" className="hidden md:flex space-x-10">
-            <Link href="/" className="text-base  font-font font-medium text-four hover:text-gray-900">
+              <Link href="/" className="text-base font-font font-medium text-four hover:text-gray-900">
                 Home
               </Link>
               <Popover className="relative">
@@ -76,7 +78,7 @@ export default function NavbarSignedIn() {
                     <Popover.Button
                       className={classNames(
                         open ? 'text-four' : 'text-four',
-                        'group bg-white rounded-md inline-flex items-center text-base font-font font-medium  hover:text-gray-900 '
+                        'group bg-white rounded-md inline-flex items-center text-base font-font font-medium hover:text-gray-900 '
                       )}
                     >
                       <span>Recipes</span>
@@ -99,7 +101,7 @@ export default function NavbarSignedIn() {
                       leaveTo="opacity-0 translate-y-1"
                     >
                       <Popover.Panel className="absolute z-10 -ml-4 mt-3 transform w-screen max-w-md lg:max-w-2xl lg:ml-0 lg:left-1/2 lg:-translate-x-1/2">
-                        <div className="rounded-lg shadow-lg  overflow-hidden">
+                        <div className="rounded-lg shadow-lg overflow-hidden">
                           <div className="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8 lg:grid-cols-2">
                             {recipes.map((item) => (
                               <Link
@@ -124,16 +126,23 @@ export default function NavbarSignedIn() {
                 )}
               </Popover>
 
-              <a href="/Recipes" className="text-base font-font font-medium text-four hover:text-gray-900">
+              <Link href="/Recipes" className="text-base font-font font-medium text-four hover:text-gray-900">
                 Popular Recipes
-              </a>
-             
+              </Link>
             </Popover.Group>
            
             <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-            <Image src={session.user.image} alt="Profile" width={40} height={40} className="rounded-full" />
-              <span className="ml-2 text-base font-medium text-gray-900">{session.user.name}</span>
-              <Logout />
+              {status === 'authenticated' ? (
+                <>
+                  <Image src={session.user.image || '/logo1.png'} alt="Profile" width={40} height={40} className="rounded" />
+                  <span className="ml-2 text-base font-medium text-gray-900">{session.user.name}</span>
+                  <Logout />
+                </>
+              ) : (
+                <Link href="/api/auth/signin" className="text-base font-font font-medium text-four hover:text-gray-900">
+                  Sign In
+                </Link>
+              )}
             </div>
           </div>
 
@@ -186,19 +195,25 @@ export default function NavbarSignedIn() {
                 </div>
                 <div className="py-6 px-5">
                   <div className="grid grid-cols-2 gap-4">
-                    <Link href="/" className="text-base  font-font font-medium text-four hover:text-gray-700">
+                    <Link href="/" className="text-base font-font font-medium text-four hover:text-gray-700">
                       Home
                     </Link>
                     <Link href="/Recipes" className="text-base font-medium font-font text-four hover:text-gray-700">
                       Popular Recipes
                     </Link>
-                    
                   </div>
                   <div className="mt-8">
-                  
-                  <Image src={session.user.image} alt="Profile" width={40} height={40} className="rounded-full" />
-              <span className="ml-2 text-base font-medium font-font text-gray-900">{session.user.name}</span>
-              <Logout />
+                    {status === 'authenticated' ? (
+                      <>
+                        <Image src={session.user.image || '/logo2.png'}  alt="Profile" width={40} height={40} className="rounded-full" />
+                        <span className="ml-2 text-base font-medium font-font text-gray-900">{session.user.name}</span>
+                        <Logout />
+                      </>
+                    ) : (
+                      <Link href="/api/auth/signin" className="text-base font-font font-medium text-four hover:text-gray-900">
+                        Sign In
+                      </Link>
+                    )}
                   </div>
                 </div>
               </div>
@@ -206,9 +221,6 @@ export default function NavbarSignedIn() {
           </Transition>
         </Popover>
       </header>
-
-      
-      
     </div>
   )
 }
