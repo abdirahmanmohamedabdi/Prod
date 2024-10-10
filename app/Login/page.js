@@ -1,6 +1,31 @@
-import React from "react";
+"use client"
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { doSocialLogin } from "../actions";
+import {doCredentialsLogin} from "../actions";
 const LoginForm = () => {
+  const router = useRouter();
+  const [ error, setError ] = useState("");
+
+  async function onSubmit(event) {
+    event.preventDefault();
+    try {
+      const formData = new FormData(event.currentTarget);
+
+      const response = await doCredentialsLogin(formData);
+
+      if(!! response.error) {
+        console.error(response.error);
+        setError(error.message);
+      } else {
+        router.push("/");
+      }
+    } catch (e) {
+      console.error(e);
+      setError("Cechk your credentials and try again");
+    }
+  }
   return (
     <div>
       <div className="min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -26,7 +51,7 @@ const LoginForm = () => {
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            <form className="space-y-6" action="#" method="POST">
+            <form className="space-y-6" onSubmit={onSubmit}>
               <div>
                 <label
                   htmlFor="email"
