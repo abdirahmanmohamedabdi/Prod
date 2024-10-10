@@ -2,17 +2,17 @@ import mongoose, {Schema} from "mongoose";
 
 const userSchema = new Schema({
     name: {
-        type: String,
         required: true,
+        type: String, 
     },
     email: {
-        type: String,
         required: true,
+        type: String,
     },
     password: {
-        type: String,
         required: true,
+        type: String,
     },
 });
 
-export const User = mongoose.model("User", userSchema);
+export const User = mongoose.models.User ?? mongoose.model("User", userSchema);
