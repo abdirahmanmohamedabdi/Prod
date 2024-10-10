@@ -35,7 +35,7 @@ const recipes = [
     icon: ShareIcon,
   },
 ]
-
+import Link from 'next/link';
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
@@ -67,9 +67,9 @@ export default function NavbarSignedIn() {
             </div>
             
             <Popover.Group as="nav" className="hidden md:flex space-x-10">
-            <a href="/" className="text-base  font-font font-medium text-four hover:text-gray-900">
+            <Link href="/" className="text-base  font-font font-medium text-four hover:text-gray-900">
                 Home
-              </a>
+              </Link>
               <Popover className="relative">
                 {({ open }) => (
                   <>
@@ -102,7 +102,7 @@ export default function NavbarSignedIn() {
                         <div className="rounded-lg shadow-lg  overflow-hidden">
                           <div className="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8 lg:grid-cols-2">
                             {recipes.map((item) => (
-                              <a
+                              <Link
                                 key={item.name}
                                 href={item.href}
                                 className="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50"
@@ -114,7 +114,7 @@ export default function NavbarSignedIn() {
                                   <p className="text-base font-font font-medium text-three">{item.name}</p>
                                   <p className="mt-1 text-sm font-font text-gray-500">{item.description}</p>
                                 </div>
-                              </a>
+                              </Link>
                             ))}
                           </div>
                         </div>
@@ -170,7 +170,7 @@ export default function NavbarSignedIn() {
                   <div className="mt-6">
                     <nav className="grid grid-cols-1 gap-7">
                       {recipes.map((item) => (
-                        <a
+                        <Link
                           key={item.name}
                           href={item.href}
                           className="-m-3 p-3 flex items-center rounded-lg hover:bg-gray-50"
@@ -179,25 +179,25 @@ export default function NavbarSignedIn() {
                             <item.icon className="h-6 w-6" aria-hidden="true" />
                           </div>
                           <div className="ml-4 text-base font-medium text-gray-900">{item.name}</div>
-                        </a>
+                        </Link>
                       ))}
                     </nav>
                   </div>
                 </div>
                 <div className="py-6 px-5">
                   <div className="grid grid-cols-2 gap-4">
-                    <a href="/" className="text-base  font-font font-medium text-four hover:text-gray-700">
+                    <Link href="/" className="text-base  font-font font-medium text-four hover:text-gray-700">
                       Home
-                    </a>
-                    <a href="/Recipes" className="text-base font-medium font-font text-four hover:text-gray-700">
+                    </Link>
+                    <Link href="/Recipes" className="text-base font-medium font-font text-four hover:text-gray-700">
                       Popular Recipes
-                    </a>
+                    </Link>
                     
                   </div>
                   <div className="mt-8">
                   
                   <Image src={session.user.image} alt="Profile" width={40} height={40} className="rounded-full" />
-              <span className="ml-2 text-base font-medium text-gray-900">{session.user.name}</span>
+              <span className="ml-2 text-base font-medium font-font text-gray-900">{session.user.name}</span>
               <Logout />
                   </div>
                 </div>

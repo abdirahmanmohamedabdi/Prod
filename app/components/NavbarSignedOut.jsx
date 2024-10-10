@@ -11,7 +11,7 @@ import {
   XIcon,
 } from '@heroicons/react/outline'
 import { ChevronDownIcon } from '@heroicons/react/solid'
-
+import Link from 'next/link'
 const recipes = [
   {
     name: 'Add a Recipe',
@@ -65,9 +65,9 @@ export default function NavbarSignedOut () {
             </div>
             
             <Popover.Group as="nav" className="hidden md:flex space-x-10">
-            <a href="/" className="text-base  font-font font-medium text-four hover:text-gray-900">
+            <Link href="/" className="text-base  font-font font-medium text-four hover:text-gray-900">
                 Home
-              </a>
+              </Link>
               <Popover className="relative">
                 {({ open }) => (
                   <>
@@ -100,7 +100,7 @@ export default function NavbarSignedOut () {
                         <div className="rounded-lg shadow-lg  overflow-hidden">
                           <div className="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8 lg:grid-cols-2">
                             {recipes.map((item) => (
-                              <a
+                              <Link
                                 key={item.name}
                                 href={item.href}
                                 className="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50"
@@ -112,7 +112,7 @@ export default function NavbarSignedOut () {
                                   <p className="text-base font-font font-medium text-three">{item.name}</p>
                                   <p className="mt-1 text-sm font-font text-gray-500">{item.description}</p>
                                 </div>
-                              </a>
+                              </Link>
                             ))}
                           </div>
                         </div>
@@ -122,21 +122,21 @@ export default function NavbarSignedOut () {
                 )}
               </Popover>
 
-              <a href="/Recipes" className="text-base font-font font-medium text-four hover:text-gray-900">
+              <Link href="/Recipes" className="text-base font-font font-medium text-four hover:text-gray-900">
                 Popular Recipes
-              </a>
+              </Link>
            
             </Popover.Group>
             <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-              <a href="/Login" className="whitespace-nowrap  font-font text-base font-medium text-four hover:text-gray-900">
+              <Link href="/Login" className="whitespace-nowrap  font-font text-base font-medium text-four hover:text-gray-900">
                 Sign in
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/Signup"
                 className="ml-8 whitespace-nowrap font-font inline-flex font-font items-center justify-center bg-one from-purple-600 to-indigo-600 bg-origin-border px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white hover:from-purple-700 hover:to-indigo-700"
               >
                 Sign up
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -173,7 +173,7 @@ export default function NavbarSignedOut () {
                   <div className="mt-6">
                     <nav className="grid grid-cols-1 gap-7">
                       {recipes.map((item) => (
-                        <a
+                        <Link
                           key={item.name}
                           href={item.href}
                           className="-m-3 p-3 flex items-center rounded-lg hover:bg-gray-50"
@@ -182,33 +182,33 @@ export default function NavbarSignedOut () {
                             <item.icon className="h-6 w-6" aria-hidden="true" />
                           </div>
                           <div className="ml-4 text-base font-medium text-gray-900">{item.name}</div>
-                        </a>
+                        </Link>
                       ))}
                     </nav>
                   </div>
                 </div>
                 <div className="py-6 px-5">
                   <div className="grid grid-cols-2 gap-4">
-                    <a href="/" className="text-base  font-font font-medium text-four hover:text-gray-700">
+                    <Link href="/" className="text-base  font-font font-medium text-four hover:text-gray-700">
                       Home
-                    </a>
+                    </Link>
                     <a href="/Recipes" className="text-base font-medium font-font text-four hover:text-gray-700">
                       Popular Recipes
                     </a>
                     
                   </div>
                   <div className="mt-6">
-                    <a
+                    <Link
                       href="/Signup"
                       className="w-full flex items-center justify-center  bg-one font-font  to-indigo-600 bg-origin-border px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white hover:from-purple-700 hover:to-indigo-700"
                     >
                       Sign up
-                    </a>
+                    </Link>
                     <p className="mt-6 text-center text-base font-font font-medium text-four">
                       Existing user ? 
-                      <a href="/Login" className="font-font break text-one">
+                      <Link href="/Login" className="font-font break text-one">
                          Sign in
-                      </a>
+                      </Link>
                     </p>
                   </div>
                 </div>
