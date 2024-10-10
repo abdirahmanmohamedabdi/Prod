@@ -1,6 +1,7 @@
 "use client"
 import React from "react";
 import { doSocialLogin } from "../actions";
+import doCredentialsLogin from "../actions";
 import { useRouter } from "next/navigation";
 const SignUp = () => {
   const router = useRouter();
