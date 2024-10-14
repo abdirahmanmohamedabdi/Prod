@@ -2,6 +2,8 @@
 import { Fragment } from 'react'
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
+import { useState } from 'react';
+import { useEffect } from 'react';
 import UserIcon from '@heroicons/react/solid';
 import { Popover, Transition } from '@headlessui/react'
 import {
@@ -44,6 +46,13 @@ function classNames(...classes) {
 
 export default function NavbarSignedIn() {
   const { data: session, status } = useSession();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (status !== 'loading') {
+      setLoading(false);
+    }
+  }, [status]);
 
   return (
     <div className="bg-white">
@@ -203,9 +212,14 @@ export default function NavbarSignedIn() {
                     </Link>
                   </div>
                   <div className="mt-8">
-                    {status === 'authenticated' ? (
+                    {loading ? (
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse"></div>
+                        <span className="ml-2 text-base font-medium font-font text-gray-900">Loading...</span>
+                      </div>
+                    ) : status === 'authenticated' ? (
                       <>
-                        <Image src={session.user.image || '/logo2.png'}  alt="Profile" width={40} height={40} className="rounded-full" />
+                        <Image src={session.user.image || '/logo1.png'} alt="Profile" width={40} height={40} className="rounded" />
                         <span className="ml-2 text-base font-medium font-font text-gray-900">{session.user.name}</span>
                         <Logout />
                       </>
