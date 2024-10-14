@@ -1,13 +1,20 @@
 "use client"
-
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { doSocialLogin } from "../actions";
 import {doCredentialsLogin} from "../actions";
 const LoginForm = () => {
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [ error, setError ] = useState("");
 
+  useEffect(() => {
+    if (status === 'authenticated') {
+      router.push('/');
+    }
+  }, [status, router]);
   async function onSubmit(event) {
     event.preventDefault();
     try {
@@ -41,7 +48,7 @@ const LoginForm = () => {
           <p className="mt-2 text-center text-sm font-font text-gray-600">
             Or{" "}
             <a
-              href="#"
+              href="/Signup"
               className="font-medium text-one font-font hover:text-indigo-500"
             >
               Sign Up
