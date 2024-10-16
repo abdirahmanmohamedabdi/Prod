@@ -1,10 +1,12 @@
-"use client"
+"use client";
 import React from "react";
-import { doSocialLogin } from "../actions";
-import doCredentialsLogin from "../actions";
 import { useRouter } from "next/navigation";
+import { doSocialLogin } from "../actions";
+import toast, { Toaster } from "react-hot-toast"; // Import toast and Toaster for notifications
+
 const SignUp = () => {
   const router = useRouter();
+
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -15,22 +17,33 @@ const SignUp = () => {
       const email = formData.get("email");
       const password = formData.get("password");
 
-      const response = await fetch('/api/register', {
-        method: 'POST',
+      const response = await fetch("/api/register", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ name, email, password }),
       });
-      
-      response.status === 201  && router.push('/Login')
-      
+
+      if (response.status === 201) {
+        toast.success("Account created successfully!");
+
+        router.push("/Login");
+      } else {
+        // Show error toast
+        toast.error("Failed to create an account. Please try again.");
+      }
     } catch (e) {
-      console.error(e.message)
+      console.error(e.message);
+      // Show error toast on catch
+      toast.error("An error occurred during sign-up. Please try again.");
     }
-    }
+  }
+
   return (
     <div>
+      <Toaster />
+
       <div className="min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <img
@@ -38,14 +51,14 @@ const SignUp = () => {
             src="/logo1.png"
             alt="Workflow"
           />
-          <h2 className="mt-6 text-center text-3xl font-font font-extrabold text-gray-900">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Sign up for an account
           </h2>
-          <p className="mt-2 text-center text-sm font-font text-gray-600">
+          <p className="mt-2 text-center text-sm text-gray-600">
             Or{" "}
             <a
               href="/Login"
-              className="font-medium text-one font-font hover:text-indigo-500"
+              className="font-medium text-indigo-600 hover:text-indigo-500"
             >
               Sign In
             </a>
@@ -54,11 +67,11 @@ const SignUp = () => {
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            <form className="space-y-6" onSubmit={handleSubmit} >
-            <div>
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              <div>
                 <label
                   htmlFor="name"
-                  className="block text-sm font-font font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-700"
                 >
                   Name
                 </label>
@@ -66,17 +79,17 @@ const SignUp = () => {
                   <input
                     id="name"
                     name="name"
-                    type="name"
-                    autoComplete="name"
+                    type="text"
                     required
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   />
                 </div>
               </div>
+
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-font font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-700"
                 >
                   Email address
                 </label>
@@ -85,7 +98,6 @@ const SignUp = () => {
                     id="email"
                     name="email"
                     type="email"
-                    autoComplete="email"
                     required
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   />
@@ -95,7 +107,7 @@ const SignUp = () => {
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-font font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-700"
                 >
                   Password
                 </label>
@@ -104,7 +116,6 @@ const SignUp = () => {
                     id="password"
                     name="password"
                     type="password"
-                    autoComplete="current-password"
                     required
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   />
@@ -116,7 +127,7 @@ const SignUp = () => {
               <div>
                 <button
                   type="submit"
-                  className="w-full flex justify-center py-2 px-4 font-font border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-two hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                   Sign up
                 </button>
@@ -129,12 +140,13 @@ const SignUp = () => {
                   <div className="w-full border-t border-gray-300" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white font-font text-gray-500">
+                  <span className="px-2 bg-white text-gray-500">
                     Or continue with
                   </span>
                 </div>
               </div>
-              <form action={doSocialLogin} >
+
+              <form action={doSocialLogin}>
                 <div className="mt-6 grid grid-cols-2 gap-2">
                   <div>
                     <button
@@ -182,7 +194,6 @@ const SignUp = () => {
                       type="submit"
                       name="action"
                       value="github"
-                      href="#"
                       className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                     >
                       <span className="sr-only">Sign in with GitHub</span>
