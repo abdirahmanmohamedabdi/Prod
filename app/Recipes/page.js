@@ -1,63 +1,53 @@
-import Link from 'next/link';
+"use client";
 
-const fetchRecipes = async () => {
-  const url = 'https://tasty.p.rapidapi.com/recipes/list?from=0&size=20&tags=under_30_minutes';
-  const options = {
-    method: 'GET',
-    headers: {
-      'x-rapidapi-key': 'b927733739mshbab0909e1347b4ep1c1a2fjsn652f8f4dff61', // Replace with your API key
-      'x-rapidapi-host': 'tasty.p.rapidapi.com',
-    },
-  };
+import { useEffect, useState } from 'react';
 
-  try {
-    const response = await fetch(url, options);
-    const data = await response.json();
-    console.log("Fetched recipes:", data); // Log the fetched data
-    return data.results; // Return the recipes
-  } catch (error) {
-    console.error("Error fetching recipes:", error); // Log any errors
-    return [];
-  }
-};
+export default function RecipesPage() {
+    const [recipes, setRecipes] = useState([]);
+    const [error, setError] = useState(null);
 
-export default async function RecipesPage() {
-  const recipes = await fetchRecipes();
+    useEffect(() => {
+        const fetchRecipes = async () => {
+            try {
+                const response = await fetch('/api/recipes');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch recipes');
+                }
+                const data = await response.json();
+                setRecipes(data); // Set the recipes state with the fetched data
+            } catch (error) {
+                setError(error.message);
+            }
+        };
 
-  return (
-    <div className="bg-white">
-      <div className="max-w-2xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
-        <h2 className="text-2xl font-bold mb-4">Popular Recipes</h2>
+        fetchRecipes(); // Call the fetch function
+    }, []);
 
-        <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-3 lg:gap-x-8">
-          {recipes.map((recipe) => (
-            <div
-              key={recipe.id}
-              className="group relative bg-white border border-gray-200 rounded-lg flex flex-col overflow-hidden"
-            >
-              <div className="aspect-w-3 aspect-h-4 bg-gray-200 group-hover:opacity-75 sm:aspect-none sm:h-96">
-                <img
-                  src={recipe.thumbnail_url} // Use the recipe thumbnail URL
-                  alt={recipe.name} // Use the recipe name for alt text
-                  className="w-full h-full object-center object-cover sm:w-full sm:h-full"
-                />
-              </div>
-              <div className="flex-1 p-4 space-y-2 flex flex-col">
-                <h3 className="text-sm font-medium text-gray-900">
-                  <Link href={`/recipes/${recipe.id}`}>
-                    <span aria-hidden="true" className="absolute inset-0" />
-                    {recipe.name} {/* Display recipe name */}
-                  </Link>
-                </h3>
-                <p className="text-sm text-gray-500">{recipe.description || 'No description available.'}</p>
-                <div className="flex-1 flex flex-col justify-end">
-                  <p className="text-sm italic text-gray-500">Preparation time: {recipe.cook_time || 'N/A'}</p> {/* Example option */}
-                </div>
-              </div>
+    return (
+        <div className="container mx-auto p-4">
+            <h1 className="text-2xl font-bold font-font mb-4">Recipes</h1>
+            {error && <p className="text-red-500">Error: {error}</p>}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {recipes.length > 0 ? (
+                    recipes.map((recipe) => (
+                        <div key={recipe._id} className="border p-4 rounded shadow">
+                            <a href={`/recipes/${recipe._id}`}>
+                                <h2 className="text-xl font-font font-bold mb-2">{recipe.title}</h2>
+                                <img
+                                    src={recipe.image || '/logo2.png'} // Show recipe image or fallback image
+                                    alt={recipe.title}
+                                    className="w-full h-38 object-cover mb-4"
+                                />
+                                <p className='font-font'><strong>Ingredients:</strong> {recipe.ingredients.substring(0, 50)}...</p>
+                                <p className='font-font'><strong>Steps:</strong> {recipe.steps.substring(0, 50)}...</p>
+                            </a>
+                            <p className="text-sm text-gray-500 font-font mt-2">Uploaded on: {new Date(recipe.createdAt).toLocaleDateString()}</p>
+                        </div>
+                    ))
+                ) : (
+                    <p>No recipes found.</p>
+                )}
             </div>
-          ))}
         </div>
-      </div>
-    </div>
-  );
+    );
 }
