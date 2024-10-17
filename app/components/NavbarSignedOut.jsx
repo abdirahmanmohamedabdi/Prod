@@ -27,9 +27,9 @@ const recipes = [
   },
   { name: 'Favourite Recipes', description: "Here are some of my favourite recipes.", href: '#', icon: HeartIcon },
   {
-    name: 'Share a Recipes',
-    description: "Share your favourite recipes.",
-    href: '#',
+    name: 'Search for  a Recipe',
+    description: "Search Recipes.",
+    href: '/Search',
     icon: ShareIcon,
   },
 ]

@@ -1,4 +1,4 @@
-import mongoose, {Schema} from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const userSchema = new Schema({
     name: {
@@ -8,10 +8,15 @@ const userSchema = new Schema({
     email: {
         required: true,
         type: String,
+        unique: true, // Ensure unique emails
     },
     password: {
         required: true,
         type: String,
+    },
+    favorites: {
+        type: [String], // Array of recipe IDs or URIs
+        default: [], // Default to an empty array
     },
 });
 
