@@ -7,31 +7,31 @@ import Link from 'next/link';
 export default function FavoriteRecipesPage() {
     const { data: session } = useSession();
     const [favorites, setFavorites] = useState([]);
-    const [recipeDetails, setRecipeDetails] = useState([]); // New state for recipe details
+    const [recipeDetails, setRecipeDetails] = useState([]); 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchFavorites = async () => {
-            if (!session?.user?.email) return; // Ensure email is available
+            if (!session?.user?.email) return;
 
             setLoading(true);
             setError(null);
             try {
-                const res = await fetch(`/api/favorites?email=${session.user.email}`); // Pass email as query parameter
+                const res = await fetch(`/api/favorites?email=${session.user.email}`); 
                 if (!res.ok) {
                     throw new Error('Failed to fetch favorite recipes');
                 }
                 const data = await res.json();
                 setFavorites(data);
 
-                // Fetch details for each favorite recipe
+                
                 const recipePromises = data.map(favorite => 
                     fetch(`/api/recipes/${favorite.recipeId}`)
                 );
                 const recipeResponses = await Promise.all(recipePromises);
 
-                // Get the recipe details
+               
                 const detailedRecipes = await Promise.all(
                     recipeResponses.map(res => {
                         if (!res.ok) {
@@ -49,7 +49,7 @@ export default function FavoriteRecipesPage() {
             }
         };
 
-        fetchFavorites(); // Fetch user's favorite recipes
+        fetchFavorites(); 
     }, [session]);
 
     if (loading) {
