@@ -52,14 +52,14 @@ const LoginForm = () => {
             src="/logo1.png"
             alt="Workflow"
           />
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-6 text-center text-3xl font-font font-extrabold text-gray-900">
             Sign in to your account
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="mt-2 text-center text-sm font-font text-gray-600">
             Or{" "}
             <a
               href="/Signup"
-              className="font-medium text-indigo-600 hover:text-indigo-500"
+              className="font-medium text-indigo-600 font-font hover:text-indigo-500"
             >
               Sign Up
             </a>
@@ -72,7 +72,7 @@ const LoginForm = () => {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-font font-medium text-gray-700"
                 >
                   Email address
                 </label>
@@ -91,7 +91,7 @@ const LoginForm = () => {
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-font font-medium text-gray-700"
                 >
                   Password
                 </label>
@@ -110,7 +110,7 @@ const LoginForm = () => {
               <div>
                 <button
                   type="submit"
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="w-full flex justify-center font-font py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-one hover:bg-orange-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                   Sign in
                 </button>
@@ -123,7 +123,7 @@ const LoginForm = () => {
                   <div className="w-full border-t border-gray-300" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">
+                  <span className="px-2 font-font bg-white text-gray-500">
                     Or continue with
                   </span>
                 </div>
