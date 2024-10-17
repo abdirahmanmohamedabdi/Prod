@@ -1,5 +1,5 @@
 import { connectDB } from '@/app/lib/mongo';
-import { User } from '@/app/model/user-model';
+import { User } from '@/app/model/user';
 
 export async function GET(req) {
     const { searchParams } = new URL(req.url);
@@ -8,8 +8,7 @@ export async function GET(req) {
     try {
         await connectDB(); 
 
-        
-        const user = await User.findById(userId).select('favorites').populate('favorites');
+        const user = await User.findById(userId).populate('favorites'); // Fetch user and populate favorites
         
         if (!user) {
             return new Response(JSON.stringify({ error: 'User not found' }), { status: 404 });
