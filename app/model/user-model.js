@@ -3,7 +3,7 @@ import mongoose, { Schema } from "mongoose";
 const userSchema = new Schema({
     name: {
         required: true,
-        type: String, 
+        type: String,
     },
     email: {
         required: true,
@@ -14,10 +14,7 @@ const userSchema = new Schema({
         required: true,
         type: String,
     },
-    favorites: {
-        type: [String], // Array of recipe IDs or URIs
-        default: [], // Default to an empty array
-    },
+ 
 });
 
 export const User = mongoose.models.User ?? mongoose.model("User", userSchema);
