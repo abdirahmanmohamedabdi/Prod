@@ -21,7 +21,7 @@ export default function Cta() {
           <div className="mt-8">
             <div className="inline-flex rounded-md shadow">
               <Link
-                href="#"
+                href="/Signup"
                 className="inline-flex items-center justify-center px-5 py-3 border border-transparent font-font text-base font-medium rounded-md text-white bg-one hover:bg-three"
               >
                 Ready to Get Cooking?

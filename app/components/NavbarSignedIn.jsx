@@ -12,6 +12,7 @@ import {
   ViewListIcon,
   PlusIcon,
   ShareIcon,
+  SearchIcon,
   XIcon,
 } from '@heroicons/react/outline'
 import { ChevronDownIcon } from '@heroicons/react/solid'
@@ -22,21 +23,16 @@ const recipes = [
   {
     name: 'Add a Recipe',
     description: 'Share some of your favourite recipes.',
-    href: '#',
+    href: '/upload',
     icon: PlusIcon,
   },
+  
+  { name: 'Favourite Recipes', description: "Here are some of my favourite recipes.", href: '/favorites', icon: HeartIcon },
   {
-    name: 'My Recipes',
-    description: 'My recipes.',
-    href: '#',
-    icon: ViewListIcon,
-  },
-  { name: 'Favourite Recipes', description: "Here are some of my favourite recipes.", href: '#', icon: HeartIcon },
-  {
-    name: 'Share a Recipes',
+    name: 'Search for a Recipe',
     description: "Share your favourite recipes.",
-    href: '#',
-    icon: ShareIcon,
+    href: '/Search',
+    icon: SearchIcon,
   },
 ]
 
@@ -135,7 +131,7 @@ export default function NavbarSignedIn() {
                 )}
               </Popover>
 
-              <Link href="/Recipes" className="text-base font-font font-medium text-four hover:text-gray-900">
+              <Link href="/recipes" className="text-base font-font font-medium text-four hover:text-gray-900">
                 Popular Recipes
               </Link>
             </Popover.Group>
@@ -207,7 +203,7 @@ export default function NavbarSignedIn() {
                     <Link href="/" className="text-base font-font font-medium text-four hover:text-gray-700">
                       Home
                     </Link>
-                    <Link href="/Recipes" className="text-base font-medium font-font text-four hover:text-gray-700">
+                    <Link href="/recipes" className="text-base font-medium font-font text-four hover:text-gray-700">
                       Popular Recipes
                     </Link>
                   </div>
