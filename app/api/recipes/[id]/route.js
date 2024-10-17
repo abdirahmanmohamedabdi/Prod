@@ -1,25 +1,49 @@
-import { connectDB } from "@/app/lib/mongo";
-import { Recipe } from "@/app/models/recipe";
+import { MongoClient, ObjectId } from 'mongodb';
 
-export const GET = async (req, { params }) => {
+export const config = {
+    api: {
+        bodyParser: false, 
+    },
+};
+
+export async function GET(req, { params }) {
+    const uri = 'mongodb://localhost:27017';
+    const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
     try {
-        await connectDB();
+        await client.connect(); 
+        const database = client.db('Pishipoa'); 
+        const collection = database.collection('recipes');
 
-        const { id } = params; // Get the recipe ID from the URL parameters
+        const { id } = params; 
 
-        // Find the recipe by its ID
-        const recipe = await Recipe.findById(id);
-        if (!recipe) {
-            return new Response(JSON.stringify({ message: 'Recipe not found' }), { status: 404 });
+       
+        const result = await collection.findOne({ _id: new ObjectId(id) });
+
+        if (result) {
+            return new Response(JSON.stringify(result), {
+                status: 200,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+        } else {
+            return new Response(JSON.stringify({ message: 'No recipe found with that ID' }), {
+                status: 404,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
         }
-
-        return new Response(JSON.stringify(recipe), {
-            status: 200,
-        });
     } catch (error) {
-        console.error('Error fetching recipe:', error);
+        console.error('Error fetching recipe by ID:', error);
         return new Response(JSON.stringify({ message: 'Internal Server Error' }), {
             status: 500,
+            headers: {
+                'Content-Type': 'application/json',
+            },
         });
+    } finally {
+        await client.close(); 
     }
-};
+}
