@@ -33,10 +33,27 @@ export default function RecipeSearchPage() {
         }
     };
 
+    const handleAddFavorite = async (recipeId) => {
+        try {
+            const res = await fetch(`/api/favorites`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ recipeId }),
+            });
+            if (!res.ok) {
+                throw new Error('Failed to add favorite');
+            }
+            alert('Recipe added to favorites!');
+        } catch (error) {
+            console.error('Error adding favorite:', error);
+            alert('Failed to add favorite');
+        }
+    };
+
     return (
-        
         <div className="container mx-auto p-4">
-            
             <h1 className="text-2xl font-bold mb-4">Search Recipes</h1>
             <form onSubmit={handleSearch} className="mb-4">
                 <input
@@ -62,22 +79,22 @@ export default function RecipeSearchPage() {
                 {recipes.length > 0 ? (
                     recipes.map((recipeData, index) => {
                         const recipe = recipeData.recipe;
-                        const recipeId = encodeURIComponent(recipe.uri); 
-
+                        const recipeId = encodeURIComponent(recipe.uri);
                         return (
                             <div key={index} className="border p-4 rounded shadow">
-                               
-                                <Link href={`/search/${recipeId}`}>
-                                    <h2 className="text-xl font-bold mb-2 cursor-pointer">{recipe.label}</h2>
-                                </Link>
-                                <img src={recipe.image} alt={recipe.label} className="w-full h-48 object-cover mb-4" />
-                                <p><strong>Calories:</strong> {Math.round(recipe.calories)}</p>
-                                <p><strong>Diet Labels:</strong> {recipe.dietLabels.join(', ') || 'N/A'}</p>
+                                <h2 className="text-xl font-bold mb-2">{recipe.label}</h2>
+                                <img
+                                    src={recipe.image}
+                                    alt={recipe.label}
+                                    className="w-full h-48 object-cover mb-4"
+                                />
+                                <p><strong>Ingredients:</strong> {recipe.ingredientLines.join(', ')}</p>
+                                
                             </div>
                         );
                     })
                 ) : (
-                    !loading && <p>No recipes found. Try searching for something else.</p>
+                    <p>No recipes found.</p>
                 )}
             </div>
         </div>

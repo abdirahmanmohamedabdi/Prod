@@ -1,21 +1,34 @@
+"use client"
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import { useSession } from 'next-auth/react'; // Import useSession for authentication
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 export default function RecipeDetailPage() {
-    const { id } = useParams(); // Get the dynamic recipe ID from the URL
+    const router = useRouter();
+    const { data: session } = useSession();
+    const [id, setId] = useState(null); // State to store the recipe ID
     const [recipe, setRecipe] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [isFavorited, setIsFavorited] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [isFavorited, setIsFavorited] = useState(false); // State to track if the recipe is favorited
-    const { data: session } = useSession(); // Get user session
+
+    useEffect(() => {
+        if (router.isReady) {
+            const queryId = router.query.id;
+            console.log('Router is ready:', router.isReady); // Log router readiness
+            console.log('Query ID:', queryId); // Debugging statement
+            if (queryId) {
+                setId(queryId);
+            }
+        }
+    }, [router.isReady, router.query]);
 
     useEffect(() => {
         const fetchRecipeDetails = async () => {
-            const appId = '13684d21'; // Your Edamam Application ID
-            const appKey = 'fe7633addac715f1fac840686ec51843'; // Your Edamam Application Key
-            const decodedId = decodeURIComponent(id); // Decode the recipe ID back to its original form
+            setLoading(true);
+            setError(null);
 
+            const decodedId = decodeURIComponent(id); // Decode the recipe ID back to its original form
             const url = `https://api.edamam.com/search?r=${decodedId}&app_id=${appId}&app_key=${appKey}`;
 
             try {
@@ -50,33 +63,31 @@ export default function RecipeDetailPage() {
             return;
         }
 
-        const userId = session.user.id; // Assuming the user ID is stored in the session
-
         try {
-            const response = await fetch(isFavorited ? '/api/favorites/remove' : '/api/favorites/add', {
+            const res = await fetch(`/api/favorites`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ userId, recipeId: recipe.uri }),
+                body: JSON.stringify({ recipeId: recipe.uri }),
             });
-
-            if (!response.ok) {
-                throw new Error('Failed to update favorites');
+            if (!res.ok) {
+                throw new Error('Failed to update favorite status');
             }
-
-            setIsFavorited(!isFavorited); // Toggle the favorite state
+            const data = await res.json();
+            setIsFavorited(data.isFavorited);
         } catch (error) {
-            setError(error.message);
+            console.error('Error updating favorite status:', error);
+            alert('Failed to update favorite status');
         }
     };
 
-    if (loading) {
-        return <p>Loading...</p>;
+    if (error) {
+        return <p className="text-red-500">Error: {error}</p>;
     }
 
-    if (error) {
-        return <p className="text-red-500">{error}</p>;
+    if (loading) {
+        return <p>Loading...</p>;
     }
 
     if (!recipe) {
@@ -85,29 +96,20 @@ export default function RecipeDetailPage() {
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-3xl font-bold mb-4">{recipe.label}</h1>
+            <h1 className="text-2xl font-bold mb-4">{recipe.label}</h1>
             <img
-                src={recipe.image || '/logo2.png'}
+                src={recipe.image || '/logo2.png'} // Show recipe image or fallback image
                 alt={recipe.label}
-                className="w-full h-64 object-cover mb-4"
+                className="w-full h-48 object-cover mb-4"
             />
-            <p className="mb-4"><strong>Description:</strong> {recipe.description || 'No description available'}</p>
-            <p className="mb-4"><strong>Calories:</strong> {Math.round(recipe.calories)}</p>
-            <p className="mb-4"><strong>Diet Labels:</strong> {recipe.dietLabels.join(', ') || 'N/A'}</p>
-            <p className="mb-4"><strong>Health Labels:</strong> {recipe.healthLabels.join(', ')}</p>
             <p className="mb-4"><strong>Ingredients:</strong> {recipe.ingredientLines.join(', ')}</p>
-
-            {/* Favorite button */}
-            <button 
-                onClick={toggleFavorite} 
-                className={`mt-4 px-4 py-2 rounded ${isFavorited ? 'bg-red-500' : 'bg-green-500'} text-white`}
+            <p><strong>Steps:</strong> {recipe.steps}</p>
+            <button
+                onClick={toggleFavorite}
+                className={`p-2 rounded mt-2 ${isFavorited ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}`}
             >
                 {isFavorited ? 'Remove from Favorites' : 'Add to Favorites'}
             </button>
-
-            <a href={recipe.url} target="_blank" rel="noopener noreferrer" className="text-blue-500">
-                View Full Instructions
-            </a>
         </div>
     );
 }
