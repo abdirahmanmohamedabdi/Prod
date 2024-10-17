@@ -1,38 +1,52 @@
 import { connectDB } from '@/app/lib/mongo';
-import { User } from '@/app/model/user-model';
+import { Favorite } from '@/app/model/favorites';
 
 export async function POST(req) {
-    const { userId, recipeId } = await req.json(); 
+    const { email, recipeId } = await req.json(); 
+    await connectDB();
 
     try {
-        await connectDB(); 
-        
-        
-        await User.updateOne(
-            { _id: userId },
-            { $addToSet: { favorites: recipeId } } 
-        );
+       
+        const favorite = new Favorite({ userEmail: email, recipeId });
+        await favorite.save(); 
 
-        return new Response(JSON.stringify({ message: 'Recipe added to favorites' }), { status: 200 });
+        return new Response(JSON.stringify({ success: true }), { status: 201 });
     } catch (error) {
-        return new Response(JSON.stringify({ error: 'Failed to add to favorites' }), { status: 500 });
+        console.error('Error adding favorite:', error);
+        return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });
     }
 }
 
 export async function DELETE(req) {
-    const { userId, recipeId } = await req.json(); 
+    const { email, recipeId } = await req.json();
+    await connectDB();
 
     try {
-        await connectDB(); 
         
-       
-        await User.updateOne(
-            { _id: userId },
-            { $pull: { favorites: recipeId } } 
-        );
+        const result = await Favorite.findOneAndDelete({ userEmail: email, recipeId }); 
 
-        return new Response(JSON.stringify({ message: 'Recipe removed from favorites' }), { status: 200 });
+        if (!result) {
+            return new Response(JSON.stringify({ error: 'Favorite not found' }), { status: 404 });
+        }
+
+        return new Response(JSON.stringify({ success: true }), { status: 200 });
     } catch (error) {
-        return new Response(JSON.stringify({ error: 'Failed to remove from favorites' }), { status: 500 });
+        console.error('Error removing favorite:', error);
+        return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });
+    }
+}
+
+export async function GET(req) {
+    const { searchParams } = new URL(req.url);
+    const userEmail = searchParams.get('email'); 
+
+    try {
+        await connectDB(); // Connect to MongoDB
+        const favorites = await Favorite.find({ userEmail }); // Find all favorites for the user
+
+        return new Response(JSON.stringify(favorites), { status: 200 });
+    } catch (error) {
+        console.error('Error fetching favorites:', error);
+        return new Response(JSON.stringify({ error: 'Failed to fetch favorites' }), { status: 500 });
     }
 }
