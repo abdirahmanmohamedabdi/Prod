@@ -1,14 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 export default function UploadRecipe() {
     const [recipeData, setRecipeData] = useState({
         title: '',
         ingredients: [''],
         steps: [''],
-        image: null,
+        
     });
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
@@ -102,66 +102,58 @@ export default function UploadRecipe() {
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Upload a Recipe</h1>
+            <h1 className="text-2xl font-font font-bold mb-4">Upload a Recipe</h1>
             {error && <p className="text-red-500 mb-4">{error}</p>}
             {success && <p className="text-green-500 mb-4">{success}</p>}
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label className="block">Title</label>
+                    <label className="block font-font">Title</label>
                     <input
                         type="text"
                         value={recipeData.title}
                         onChange={handleTitleChange}
-                        className="border p-2 w-full"
+                        className="border font-font p-2 w-full"
                         required
                     />
                 </div>
 
                 <div>
-                    <label className="block">Ingredients</label>
+                    <label className="block font-font">Ingredients</label>
                     {recipeData.ingredients.map((ingredient, index) => (
                         <div key={index} className="flex space-x-2 mb-2">
                             <input
                                 type="text"
                                 value={ingredient}
                                 onChange={(e) => handleIngredientChange(index, e.target.value)}
-                                className="border p-2 w-full"
+                                className="border font-font p-2 w-full"
                                 required
                             />
-                            <button type="button" onClick={() => removeIngredientField(index)} className="bg-red-500 text-white p-2 rounded">Remove</button>
+                            <button type="button" onClick={() => removeIngredientField(index)} className="bg-red-500 font-font text-white p-2 rounded">Remove</button>
                         </div>
                     ))}
-                    <button type="button" onClick={addIngredientField} className="bg-blue-500 text-white p-2 rounded">Add Ingredient</button>
+                    <button type="button" onClick={addIngredientField} className="bg-two text-white font-font p-2 rounded">Add Ingredient</button>
                 </div>
 
                 <div>
-                    <label className="block">Steps</label>
+                    <label className="block font-font">Steps</label>
                     {recipeData.steps.map((step, index) => (
-                        <div key={index} className="flex space-x-2 mb-2">
+                        <div key={index} className="flex space-x-2 font-font mb-2">
                             <input
                                 type="text"
                                 value={step}
                                 onChange={(e) => handleStepChange(index, e.target.value)}
-                                className="border p-2 w-full"
+                                className="border font-font p-2 w-full"
                                 required
                             />
-                            <button type="button" onClick={() => removeStepField(index)} className="bg-red-500 text-white p-2 rounded">Remove</button>
+                            <button type="button" onClick={() => removeStepField(index)} className="bg-red-500 font-font text-white p-2 rounded">Remove</button>
                         </div>
                     ))}
-                    <button type="button" onClick={addStepField} className="bg-blue-500 text-white p-2 rounded">Add Step</button>
+                    <button type="button" onClick={addStepField} className="bg-two text-white p-2 font-font rounded">Add Step</button>
                 </div>
 
-                <div>
-                    <label className="block">Image (Optional)</label>
-                    <input
-                        type="file"
-                        onChange={handleFileChange}
-                        accept="image/*"
-                        className="border p-2 w-full"
-                    />
+<div className="flex justify-center mt-4">
+                <button type="submit" className="bg-one text-white  font-font p-2 rounded">Submit</button>
                 </div>
-
-                <button type="submit" className="bg-green-500 text-white p-2 rounded">Submit</button>
             </form>
         </div>
     );
