@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+![Logo](https://i.ibb.co/3FXQyg3/logo-transparent-png.png)
 
-First, run the development server:
+
+# Pishipoa
+
+Pishipoa is a recipe-sharing web application that allows users to create, upload, search, and favorite recipes. The app integrates external recipes using the Edamam API and offers a seamless user experience with authentication through Google and GitHub. Pishipoa empowers users to discover new recipes and save their favorites.
+## Features
+
+- User Authentication: Sign up and log in with Google or GitHub using NextAuth.js.
+- RecipeUpload:Authenticated users can create and upload their own recipes.
+- Search Recipes: Search for recipes using the Edamam API.
+- Favorite Recipes: Users can save their favorite recipes to view them later.
+- Dynamic Recipe Pages: Each recipe has its own detail page with full instructions aabd ingredients.
+## Technologies Used
+
+- Frontend: Next.js, Tailwind CSS
+- Authentication: NextAuth.js (Google, GitHub)
+- API: Edamam API
+- State Management: React Hooks (`useState`, `useEffect`)
+- Database: MongoDB (for user and recipe storage)
+- CSS Framework: Tailwind CSS for responsive UI
+## Installation
+- Node.js (v14 or higher)
+- MongoDB (running locally or on a cloud platform like MongoDB Atlas)
+- Edamam API credentials
+- Next Auth credentials
+## Clone the repository
+- git clone https://github.com/your-username/Pishipoa.git
+
+- cd pishipoa
+## Installation
+
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+  npm install
 ```
+    
+## Environment Variables
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+To run this project, you will need to add the following environment variables to your .env file
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- EDAMAM_APP_ID=your-edamam-app-id
+- EDAMAM_APP_KEY=your-edamam-app-key
+- MONGO_DB_CONNECTION_STRING=your-mongodb-connection-string
+- AUTH_SECRET=your-auth-secret
+- GOOGLE_CLIENT_ID=your-google-client-id
+- GOOGLE_CLIENT_SECRET=your-google-client-secret
+- GITHUB_CLIENT_ID=your-github-client-id
+- GITHUB_CLIENT_SECRET=your-github-client-secret
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## Learn More
+## Run the development server
 
-To learn more about Next.js, take a look at the following resources:
+- npm run dev
+## Authors
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Abdirahman Abdi](https://www.github.com/abdirahmanmohamedabdi)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
