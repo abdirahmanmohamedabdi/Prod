@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-
 export default function RecipeSearchPage() {
     const [query, setQuery] = useState('');
     const [recipes, setRecipes] = useState([]);
@@ -54,19 +53,19 @@ export default function RecipeSearchPage() {
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Search Recipes</h1>
-            <form onSubmit={handleSearch} className="mb-4">
+            <h1 className="text-2xl font-bold font-font mb-4">Search Recipes</h1>
+            <form onSubmit={handleSearch} className="mb-6 flex px-5">
                 <input
                     type="text"
                     placeholder="Search for recipes..."
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    className="border p-2 w-full mb-2"
+                    className="border font-font p-2 w-full mb-2"
                     required
                 />
                 <button
                     type="submit"
-                    className="bg-blue-500 text-white p-2 rounded"
+                    className="bg-one font-font text-white p-2 rounded"
                     disabled={loading}
                 >
                     {loading ? 'Searching...' : 'Search'}
@@ -82,13 +81,18 @@ export default function RecipeSearchPage() {
                         const recipeId = encodeURIComponent(recipe.uri);
                         return (
                             <div key={index} className="border p-4 rounded shadow">
-                                <h2 className="text-xl font-bold mb-2">{recipe.label}</h2>
+                                <h2 className="text-xl font-bold font-font mb-2">{recipe.label}</h2>
                                 <img
                                     src={recipe.image}
                                     alt={recipe.label}
                                     className="w-full h-48 object-cover mb-4"
                                 />
-                                <p><strong>Ingredients:</strong> {recipe.ingredientLines.join(', ')}</p>
+                                <p className='font-font'><strong>Ingredients:</strong>
+                                <ul className="list-disc font-font list-inside">
+                            {recipe.ingredientLines.map((ingredient, idx) => (
+                                <li key={idx}>{ingredient}</li>
+                            ))}
+                        </ul></p>
                                 
                             </div>
                         );
