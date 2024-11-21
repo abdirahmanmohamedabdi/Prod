@@ -11,7 +11,7 @@ const Homepage = async () => {
      
       
         <Cta />
-        <Features />
+       <Features />
     </div>
   )
 }

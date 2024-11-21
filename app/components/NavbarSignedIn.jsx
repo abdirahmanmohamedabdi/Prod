@@ -1,11 +1,11 @@
-"use client"
-import { Fragment } from 'react'
-import { useSession } from 'next-auth/react';
-import Image from 'next/image';
-import { useState } from 'react';
-import { useEffect } from 'react';
-import UserIcon from '@heroicons/react/solid';
-import { Popover, Transition } from '@headlessui/react'
+"use client";
+import { Fragment } from "react";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
+import { useState } from "react";
+import { useEffect } from "react";
+import UserIcon from "@heroicons/react/solid";
+import { Popover, Transition } from "@headlessui/react";
 import {
   MenuIcon,
   HeartIcon,
@@ -14,38 +14,43 @@ import {
   ShareIcon,
   SearchIcon,
   XIcon,
-} from '@heroicons/react/outline'
-import { ChevronDownIcon } from '@heroicons/react/solid'
-import Logout from './Logout';
-import Link from 'next/link';
+} from "@heroicons/react/outline";
+import { ChevronDownIcon } from "@heroicons/react/solid";
+// import Logout from "./Logout";
+import Link from "next/link";
 
 const recipes = [
   {
-    name: 'Add a Recipe',
-    description: 'Share some of your favourite recipes.',
-    href: '/upload',
+    name: "Add a Recipe",
+    description: "Share some of your favourite recipes.",
+    href: "/upload",
     icon: PlusIcon,
   },
-  
-  { name: 'Favourite Recipes', description: "Here are some of my favourite recipes.", href: '/favorites', icon: HeartIcon },
+
   {
-    name: 'Search for a Recipe',
+    name: "Favourite Recipes",
+    description: "Here are some of my favourite recipes.",
+    href: "/favorites",
+    icon: HeartIcon,
+  },
+  {
+    name: "Search for a Recipe",
     description: "Share your favourite recipes.",
-    href: '/Search',
+    href: "/Search",
     icon: SearchIcon,
   },
-]
+];
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(" ");
 }
 
 export default function NavbarSignedIn() {
-  const { data: session, status } = useSession();
+  // const { data: session, status } = useSession();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (status !== 'loading') {
+    if (status !== "loading") {
       setLoading(false);
     }
   }, [status]);
@@ -59,22 +64,25 @@ export default function NavbarSignedIn() {
               <a href="#">
                 <span className="sr-only">Pishipoa</span>
                 <img
-                  className="h-12 w-auto sm:h-10"
+                  className="h-2 w-auto sm:h-0"
                   src="/logo2.png"
                   alt="Pishipoa"
                 />
               </a>
             </div>
-          
+
             <div className="-mr-2 -my-2 md:hidden">
               <Popover.Button className="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 ">
                 <span className="sr-only">Open menu</span>
                 <MenuIcon className="h-6 w-6" aria-hidden="true" />
               </Popover.Button>
             </div>
-            
+
             <Popover.Group as="nav" className="hidden md:flex space-x-10">
-              <Link href="/" className="text-base font-font font-medium text-four hover:text-gray-900">
+              <Link
+                href="/"
+                className="text-base font-font font-medium text-four hover:text-gray-900"
+              >
                 Home
               </Link>
               <Popover className="relative">
@@ -82,15 +90,15 @@ export default function NavbarSignedIn() {
                   <>
                     <Popover.Button
                       className={classNames(
-                        open ? 'text-four' : 'text-four',
-                        'group bg-white rounded-md inline-flex items-center text-base font-font font-medium hover:text-gray-900 '
+                        open ? "text-four" : "text-four",
+                        "group bg-white rounded-md inline-flex items-center text-base font-font font-medium hover:text-gray-900 "
                       )}
                     >
                       <span>Recipes</span>
                       <ChevronDownIcon
                         className={classNames(
-                          open ? 'text-gray-600' : 'text-gray-400',
-                          'ml-2 h-5 w-5 group-hover:text-gray-500'
+                          open ? "text-gray-600" : "text-gray-400",
+                          "ml-2 h-5 w-5 group-hover:text-gray-500"
                         )}
                         aria-hidden="true"
                       />
@@ -115,11 +123,18 @@ export default function NavbarSignedIn() {
                                 className="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50"
                               >
                                 <div className="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-three from-purple-600 to-indigo-600 text-white sm:h-12 sm:w-12">
-                                  <item.icon className="h-6 w-6" aria-hidden="true" />
+                                  <item.icon
+                                    className="h-6 w-6"
+                                    aria-hidden="true"
+                                  />
                                 </div>
                                 <div className="ml-4">
-                                  <p className="text-base font-font font-medium text-three">{item.name}</p>
-                                  <p className="mt-1 text-sm font-font text-gray-500">{item.description}</p>
+                                  <p className="text-base font-font font-medium text-three">
+                                    {item.name}
+                                  </p>
+                                  <p className="mt-1 text-sm font-font text-gray-500">
+                                    {item.description}
+                                  </p>
                                 </div>
                               </Link>
                             ))}
@@ -131,20 +146,34 @@ export default function NavbarSignedIn() {
                 )}
               </Popover>
 
-              <Link href="/recipes" className="text-base font-font font-medium text-four hover:text-gray-900">
+              <Link
+                href="/recipes"
+                className="text-base font-font font-medium text-four hover:text-gray-900"
+              >
                 Popular Recipes
               </Link>
             </Popover.Group>
-           
+
             <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-              {status === 'authenticated' ? (
+              {status === "authenticated" ? (
                 <>
-                  <Image src={session.user.image || '/logo1.png'} alt="Profile" width={40} height={40} className="rounded" />
-                  <span className="ml-2 text-base font-medium text-gray-900">{session.user.name}</span>
+                  <Image
+                    src={session.user.image || "/logo1.png"}
+                    alt="Profile"
+                    width={40}
+                    height={40}
+                    className="rounded"
+                  />
+                  <span className="ml-2 text-base font-medium text-gray-900">
+                    {session.user.name}
+                  </span>
                   <Logout />
                 </>
               ) : (
-                <Link href="/api/auth/signin" className="text-base font-font font-medium text-four hover:text-gray-900">
+                <Link
+                  href="/api/auth/signin"
+                  className="text-base font-font font-medium text-four hover:text-gray-900"
+                >
                   Sign In
                 </Link>
               )}
@@ -192,7 +221,9 @@ export default function NavbarSignedIn() {
                           <div className="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-three from-purple-600 to-indigo-600 text-white">
                             <item.icon className="h-6 w-6" aria-hidden="true" />
                           </div>
-                          <div className="ml-4 text-base font-medium text-gray-900">{item.name}</div>
+                          <div className="ml-4 text-base font-medium text-gray-900">
+                            {item.name}
+                          </div>
                         </Link>
                       ))}
                     </nav>
@@ -200,10 +231,16 @@ export default function NavbarSignedIn() {
                 </div>
                 <div className="py-6 px-5">
                   <div className="grid grid-cols-2 gap-4">
-                    <Link href="/" className="text-base font-font font-medium text-four hover:text-gray-700">
+                    <Link
+                      href="/"
+                      className="text-base font-font font-medium text-four hover:text-gray-700"
+                    >
                       Home
                     </Link>
-                    <Link href="/recipes" className="text-base font-medium font-font text-four hover:text-gray-700">
+                    <Link
+                      href="/recipes"
+                      className="text-base font-medium font-font text-four hover:text-gray-700"
+                    >
                       Popular Recipes
                     </Link>
                   </div>
@@ -211,16 +248,29 @@ export default function NavbarSignedIn() {
                     {loading ? (
                       <div className="flex items-center">
                         <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse"></div>
-                        <span className="ml-2 text-base font-medium font-font text-gray-900">Loading...</span>
+                        <span className="ml-2 text-base font-medium font-font text-gray-900">
+                          Loading...
+                        </span>
                       </div>
-                    ) : status === 'authenticated' ? (
+                    ) : status === "authenticated" ? (
                       <>
-                        <Image src={session.user.image || '/logo1.png'} alt="Profile" width={40} height={40} className="rounded" />
-                        <span className="ml-2 text-base font-medium font-font text-gray-900">{session.user.name}</span>
+                        <Image
+                          src={session.user.image || "/logo1.png"}
+                          alt="Profile"
+                          width={40}
+                          height={40}
+                          className="rounded"
+                        />
+                        <span className="ml-2 text-base font-medium font-font text-gray-900">
+                          {session.user.name}
+                        </span>
                         <Logout />
                       </>
                     ) : (
-                      <Link href="/api/auth/signin" className="text-base font-font font-medium text-four hover:text-gray-900">
+                      <Link
+                        href="/api/auth/signin"
+                        className="text-base font-font font-medium text-four hover:text-gray-900"
+                      >
                         Sign In
                       </Link>
                     )}
@@ -232,5 +282,5 @@ export default function NavbarSignedIn() {
         </Popover>
       </header>
     </div>
-  )
+  );
 }

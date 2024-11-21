@@ -1,39 +1,76 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { CheckIcon,FireIcon } from '@heroicons/react/outline'
-
+import { CheckIcon,RefreshIcon,UserGroupIcon, } from '@heroicons/react/outline'
+import { UilBookReader } from '@iconscout/react-unicons'
+import { UilUniversity } from '@iconscout/react-unicons'
+import { UilCommentAltLines } from '@iconscout/react-unicons'
+import { UilCoins } from '@iconscout/react-unicons'
+import { UilMobileAndroid } from '@iconscout/react-unicons'
 const features = [
   {
-    name: 'Mobile-Friendly Experience',
-    description: 'Whether you’re in the kitchen or on the go, PishiPoa is designed to work seamlessly on any device. Enjoy a fully responsive design that adapts to your phone, tablet, or desktop.',
+    name: 'Student Registration',
+    description: 'Easily register students and store their personal and academic details in the system.',
+    icon: UilBookReader,
   },
-  { name: 'Discover and Search Recipes', description: 'Looking for something new to cook? Browse through thousands of recipes from fellow food lovers. Whether you’re craving a specific dish or want to explore new cuisines, PishiPoa has it all.' },
-  { name: 'Personalized Recipe Collections', description: 'Organize your favorite recipes with personalized collections. Whether it’s for weeknight dinners, holiday feasts, or desserts, create collections that fit your needs.' },
-  { name: 'User-Friendly Dashboard', description: 'Once you sign in, PishiPoa gives you a personalized dashboard to help manage your cooking journey. Track your uploads, see what recipes are trending, and revisit your favorite dishes in one convenient place.' },
-]
+  {
+    name: 'Fee Tracking',
+    description: 'Track fees paid, balances, and overdue payments .',
+    icon: UilUniversity,
+  },
+  
+  {
+    name: 'Employee Payroll',
+    description: 'Manage staff salaries, deductions (NHIF, PAYE, NSSF), and generate payslips.',
+    icon: UserGroupIcon,
+  },
+  {
+    name: 'Bulk SMS Notifications',
+    description: 'Send instant SMS alerts to students, parents, and staff for important updates.',
+    icon: UilCommentAltLines,
+  },
 
+ 
+  {
+    name: 'Expense Management',
+    description: 'Track and manage all school expenses, including utilities and purchases.',
+    icon: UilCoins,
+  },
+  {
+    name: 'Online Payments Integration',
+    description: 'Allow parents to pay fees securely through MPESA, Pesapal, or other platforms.',
+    icon: UilMobileAndroid,
+  },
+  
+ 
+];
 export default function Example() {
   return (
-    <div className="bg-white">
-      <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:py-24 lg:px-8 lg:grid lg:grid-cols-3 lg:gap-x-8">
-        <div>
-          <h2 className="text-base font-semibold font-font text-one  font-font uppercase tracking-wide">Discover the Features of PishiPoa!</h2>
-        
-          <p className="mt-4 text-lg font-font text-gray-500">
-          At PishiPoa, we’ve created a platform that not only makes sharing and discovering recipes fun but also super easy! Explore the powerful features that make PishiPoa your go-to place for everything food.
-          </p>
-        </div>
-        <div className="mt-12 lg:mt-0 lg:col-span-2">
-          <dl className="space-y-10 sm:space-y-0 sm:grid sm:grid-cols-2 sm:grid-rows-2 sm:grid-flow-col sm:gap-x-6 sm:gap-y-10 lg:gap-x-8">
+    <div className="relative bg-white py-16 sm:py-24 lg:py-32">
+      <div className="mx-auto max-w-md px-4 text-center sm:max-w-3xl sm:px-6 lg:px-8 lg:max-w-7xl">
+        <h2 className="text-base font-semibold tracking-wider text-one font-font uppercase">Everything You Need to Manage Your School</h2>
+        <p className="mt-2 text-3xl font-extrabold font-font text-gray-900 tracking-tight sm:text-4xl">
+          School management in one place
+        </p>
+       
+        <div className="mt-12">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((feature) => (
-              <div key={feature.name} className="relative">
-                <dt>
-                  <FireIcon className="absolute h-6 w-6 text-one" aria-hidden="true" />
-                  <p className="ml-9 text-lg leading-6 font-font font-medium text-gray-900">{feature.name}</p>
-                </dt>
-                <dd className="mt-2 ml-9 text-base font-font text-gray-500">{feature.description}</dd>
+              <div key={feature.name} className="pt-6 font-font">
+                <div className="flow-root bg-four rounded-lg px-6 pb-8">
+                  <div className="-mt-6">
+                    <div>
+                      <span className="inline-flex items-center justify-center p-3 bg-one rounded-md shadow-lg">
+                        <feature.icon className="h-6 w-6 text-white" aria-hidden="true" />
+                      </span>
+                    </div>
+                    <h3 className="mt-8 text-lg font-medium text-gray-900 font-font tracking-tight">{feature.name}</h3>
+                    <p className="mt-5 text-base font-font text-gray-500">
+                    {feature.description}
+                    </p>
+                  </div>
+                </div>
               </div>
             ))}
-          </dl>
+          </div>
         </div>
       </div>
     </div>

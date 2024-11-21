@@ -9,14 +9,14 @@ module.exports = {
     extend: {
       colors: {
       
-        'one': '#FF6500',
+        'one': '#88C273',
         'two': '#1E3E62',
         'three': '#0B192C',
-        'Four': '#000000',
+        'four': '#DFF2EB',
        
       },
       fontFamily: {
-        font: ['Montserrat',],
+        font: ['Nunito',],
        },
     },
   },
