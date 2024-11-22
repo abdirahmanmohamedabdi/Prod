@@ -4,10 +4,18 @@ import { HomeIcon, UsersIcon, FolderIcon, CalendarIcon, InboxIcon, ChartBarIcon 
 import { UilHome,UilUsersAlt,UilUserCheck,UilFile   } from '@iconscout/react-unicons'
 const navigation = [
   { name: "Dashboard", href: "/Hr/Dashboard", icon: UilHome },
-  { name: "Staff", href: "/Hr/Staff", icon: UilUsersAlt },
+
+  { 
+    name: "Staff", 
+    href: "/Hr/Staff", 
+    icon: UilUsersAlt,
+    subLinks: [
+      { name: "Create Employee", href: "/Create" },
+      { name: "Manage Employees", href: "/Hr/Staff/Manage" }
+    ]
+  },
   { name: "Attendance", href: "/Hr/Attendance", icon: UilUserCheck },
   { name: "Reports", href: "/Hr/Reports", icon: UilFile },
- 
 ];
 
 function classNames(...classes) {

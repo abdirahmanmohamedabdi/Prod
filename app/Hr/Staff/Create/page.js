@@ -31,10 +31,7 @@ const CreateEmployeePage = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <h2 className="text-2xl mb-4 flex items-center">
-        <PlusIcon className="h-5 w-5 mr-2" />
-        Create Employee
-      </h2>
+     
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">
