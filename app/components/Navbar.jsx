@@ -4,7 +4,12 @@ import NavbarSignedIn from './NavbarSignedIn';
 import NavbarSignedOut from './NavbarSignedOut';
 
 export default function Navbar() {
-  // const { status } = useSession();
+  // Mock the useSession hook for testing purposes
+  const { status } = useSession() || { status: 'authenticated' }; // Default to 'authenticated' for testing
 
-  return ;
+  return (
+    <nav>
+      {status === 'authenticated' ? <NavbarSignedIn /> : <NavbarSignedOut />}
+    </nav>
+  );
 }

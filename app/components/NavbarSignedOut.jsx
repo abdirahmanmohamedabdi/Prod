@@ -36,10 +36,10 @@ export default function NavbarSignedOut() {
 
             <Popover.Group as="nav" className="hidden md:flex space-x-10">
               <a
-                href="/"
+                href="/SuperAdmin"
                 className="text-base  font-font font-medium text-black hover:text-one"
               >
-                Home
+                SuperAdmin
               </a>
               <Popover className="relative">
                 {({ open }) => (
@@ -62,16 +62,16 @@ export default function NavbarSignedOut() {
               </Popover>
 
               <a
-                href="/About"
+                href="/Hr"
                 className="text-base font-font font-medium text-black hover:text-one"
               >
-                About Us
+                Hr
               </a>
               <a
-                href="/Contact"
+                href="/Finance"
                 className="text-base font-font font-medium text-black hover:text-one"
               >
-                Contact
+                Finance
               </a>
             </Popover.Group>
             <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">

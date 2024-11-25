@@ -1,21 +1,25 @@
 import "./globals.css";
+import React from 'react';
 import { SessionProvider } from 'next-auth/react';
-import localFont from 'next/font/local';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-export default async function  Layout({ children, pageProps = {} }) {
-
-
+const Layout = ({ children, session }) => {
   return (
-    <html>
+    <html lang="en">
       <body>
-        
-    <Navbar/>
-        {children}
-        <Footer/>
-      
+        <SessionProvider session={session}>
+          <div className="flex flex-col min-h-screen">
+            <Navbar />
+            <main className="flex-grow container mx-auto p-4">
+              {children}
+            </main>
+            <Footer />
+          </div>
+        </SessionProvider>
       </body>
     </html>
   );
-}
+};
+
+export default Layout;

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Layout from '@/app/components/Layout';
 
 export default function CreateEmployeePage() {
-  const [userRole, setUserRole] = useState('HR'); // Set initial role to 'HR' for testing
+  const [userRole, setUserRole] = useState('Finance'); // Set initial role to 'HR' for testing
 
   useEffect(() => {
     // Fetch user role from an API or another source

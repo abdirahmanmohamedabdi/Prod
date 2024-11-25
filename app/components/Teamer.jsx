@@ -1,68 +1,172 @@
-import Button from './Button'
-const people = [
-  { name: 'Jane Cooper', title: 'Regional Paradigm Technician', role: 'Admin', email: 'jane.cooper@example.com' },
-  { name: 'Cody Fisher', title: 'Product Directives Officer', role: 'Owner', email: 'cody.fisher@example.com' },
-  // More people...
-]
+import React, { useState, useEffect } from 'react';
 
-export default function Example() {
+const Teamer = () => {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [editingUser, setEditingUser] = useState(null);
+  const [updatedUser, setUpdatedUser] = useState({});
+
+  // Fetch users from an API
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch('/api/users');
+        const data = await response.json();
+        setUsers(data);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  // Handle Delete User
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`/api/users/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setUsers(users.filter((user) => user.id !== id));
+        console.log("Deleted user with ID:", id);
+      } else {
+        console.error('Failed to delete user');
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
+  };
+
+  // Handle Edit User
+  const handleEdit = (user) => {
+    setEditingUser(user.id);
+    setUpdatedUser(user);
+  };
+
+  // Save Edited User
+  const handleSave = async () => {
+    try {
+      const response = await fetch(`/api/users/${updatedUser.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedUser),
+      });
+
+      if (response.ok) {
+        setUsers(users.map((user) => (user.id === updatedUser.id ? updatedUser : user)));
+        console.log("Updated User:", updatedUser);
+        setEditingUser(null);
+        setUpdatedUser({});
+      } else {
+        console.error('Failed to update user');
+      }
+    } catch (error) {
+      console.error('Error updating user:', error);
+    }
+  };
+
+  // Handle Input Change for Editing
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUpdatedUser({ ...updatedUser, [name]: value });
+  };
+
   return (
-    <div className="flex flex-col">
-      <Button/>
-      <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-          <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Name
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Title
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Email
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Role
-                  </th>
-                  <th scope="col" className="relative px-6 py-3">
-                    <span className="sr-only">Edit</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {people.map((person, personIdx) => (
-                  <tr key={person.email} className={personIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{person.name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{person.title}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{person.email}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{person.role}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <a href="#" className="text-indigo-600 hover:text-indigo-900">
+    <div className="min-h-screen bg-gray-100 flex flex-col p-4">
+      <h1 className="text-3xl font-semibold font-font text-gray-800 mb-6">Manage Users</h1>
+
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-4 py-2 text-left font-font font-medium text-gray-600">Name</th>
+              <th className="px-4 py-2 text-left font-font font-medium text-gray-600">Email</th>
+              <th className="px-4 py-2 text-left font-font font-medium text-gray-600">Role</th>
+              <th className="px-4 py-2 text-left font-font font-medium text-gray-600">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user) => (
+              <tr key={user.id} className="border-b font-font hover:bg-gray-50">
+                <td className="px-4 py-2">
+                  {editingUser === user.id ? (
+                    <input
+                      type="text"
+                      name="name"
+                      value={updatedUser.name}
+                      onChange={handleChange}
+                      className="w-full px-2 py-1 font-font border rounded-md"
+                    />
+                  ) : (
+                    user.name
+                  )}
+                </td>
+                <td className="px-4 py-2">
+                  {editingUser === user.id ? (
+                    <input
+                      type="email"
+                      name="email"
+                      value={updatedUser.email}
+                      onChange={handleChange}
+                      className="w-full px-2 py-1  font-font border rounded-md"
+                    />
+                  ) : (
+                    user.email
+                  )}
+                </td>
+                <td className="px-4 py-2">
+                  {editingUser === user.id ? (
+                    <input
+                      type="text"
+                      name="role"
+                      value={updatedUser.role}
+                      onChange={handleChange}
+                      className="w-full px-2 py-1 font-font border rounded-md"
+                    />
+                  ) : (
+                    user.role
+                  )}
+                </td>
+                <td className="px-4 py-2">
+                  {editingUser === user.id ? (
+                    <button
+                      onClick={handleSave}
+                      className="bg-green-500 text-white px-4 font-font py-2 rounded-md hover:bg-green-600"
+                    >
+                      Save
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => handleEdit(user)}
+                        className="bg-blue-500 text-white px-4 py-2 font-font rounded-md hover:bg-blue-600 mr-2"
+                      >
                         Edit
-                      </a>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+                      </button>
+                      <button
+                        onClick={() => handleDelete(user.id)}
+                        className="bg-red-500 text-white px-4 py-2 font-font rounded-md hover:bg-red-600"
+                      >
+                        Delete
+                      </button>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
-  )
-}
+  );
+};
+
+export default Teamer;
