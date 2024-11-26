@@ -1,145 +1,178 @@
-/* This example requires Tailwind CSS v2.0+ */
-const products = [
-    {
-      id: 1,
-      name: 'Cold Brew Bottle',
-      description:
-        'This glass bottle comes with a mesh insert for steeping tea or cold-brewing coffee. Pour from any angle and remove the top for easy cleaning.',
-      href: '#',
-      quantity: 1,
-      price: '$32.00',
-      imageSrc: 'https://tailwindui.com/img/ecommerce-images/confirmation-page-05-product-01.jpg',
-      imageAlt: 'Glass bottle with black plastic pour top and mesh insert.',
-    },
-  ]
-  
-  export default function Example() {
-    return (
-      <main className="bg-white px-4 pt-16 pb-24 sm:px-6 sm:pt-24 lg:px-8 lg:py-32">
-        <div className="max-w-3xl mx-auto">
-          <div className="max-w-xl">
-            <h1 className="text-sm font-semibold uppercase tracking-wide text-indigo-600">Thank you!</h1>
-            <p className="mt-2 text-4xl font-extrabold tracking-tight sm:text-5xl">It's on the way!</p>
-            <p className="mt-2 text-base text-gray-500">Your order #14034056 has shipped and will be with you soon.</p>
-  
-            <dl className="mt-12 text-sm font-medium">
-              <dt className="text-gray-900">Tracking number</dt>
-              <dd className="text-indigo-600 mt-2">51547878755545848512</dd>
-            </dl>
-          </div>
-  
-          <section aria-labelledby="order-heading" className="mt-10 border-t border-gray-200">
-            <h2 id="order-heading" className="sr-only">
-              Your order
-            </h2>
-  
-            <h3 className="sr-only">Items</h3>
-            {products.map((product) => (
-              <div key={product.id} className="py-10 border-b border-gray-200 flex space-x-6">
-                <img
-                  src={product.imageSrc}
-                  alt={product.imageAlt}
-                  className="flex-none w-20 h-20 object-center object-cover bg-gray-100 rounded-lg sm:w-40 sm:h-40"
-                />
-                <div className="flex-auto flex flex-col">
-                  <div>
-                    <h4 className="font-medium text-gray-900">
-                      <a href={product.href}>{product.name}</a>
-                    </h4>
-                    <p className="mt-2 text-sm text-gray-600">{product.description}</p>
-                  </div>
-                  <div className="mt-6 flex-1 flex items-end">
-                    <dl className="flex text-sm divide-x divide-gray-200 space-x-4 sm:space-x-6">
-                      <div className="flex">
-                        <dt className="font-medium text-gray-900">Quantity</dt>
-                        <dd className="ml-2 text-gray-700">{product.quantity}</dd>
-                      </div>
-                      <div className="pl-4 flex sm:pl-6">
-                        <dt className="font-medium text-gray-900">Price</dt>
-                        <dd className="ml-2 text-gray-700">{product.price}</dd>
-                      </div>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            ))}
-  
-            <div className="sm:ml-40 sm:pl-6">
-              <h3 className="sr-only">Your information</h3>
-  
-              <h4 className="sr-only">Addresses</h4>
-              <dl className="grid grid-cols-2 gap-x-6 text-sm py-10">
-                <div>
-                  <dt className="font-medium text-gray-900">Shipping address</dt>
-                  <dd className="mt-2 text-gray-700">
-                    <address className="not-italic">
-                      <span className="block">Kristin Watson</span>
-                      <span className="block">7363 Cynthia Pass</span>
-                      <span className="block">Toronto, ON N3Y 4H8</span>
-                    </address>
-                  </dd>
-                </div>
-                <div>
-                  <dt className="font-medium text-gray-900">Billing address</dt>
-                  <dd className="mt-2 text-gray-700">
-                    <address className="not-italic">
-                      <span className="block">Kristin Watson</span>
-                      <span className="block">7363 Cynthia Pass</span>
-                      <span className="block">Toronto, ON N3Y 4H8</span>
-                    </address>
-                  </dd>
-                </div>
-              </dl>
-  
-              <h4 className="sr-only">Payment</h4>
-              <dl className="grid grid-cols-2 gap-x-6 border-t border-gray-200 text-sm py-10">
-                <div>
-                  <dt className="font-medium text-gray-900">Payment method</dt>
-                  <dd className="mt-2 text-gray-700">
-                    <p>Apple Pay</p>
-                    <p>Mastercard</p>
-                    <p>
-                      <span aria-hidden="true">•••• </span>
-                      <span className="sr-only">Ending in </span>1545
-                    </p>
-                  </dd>
-                </div>
-                <div>
-                  <dt className="font-medium text-gray-900">Shipping method</dt>
-                  <dd className="mt-2 text-gray-700">
-                    <p>DHL</p>
-                    <p>Takes up to 3 working days</p>
-                  </dd>
-                </div>
-              </dl>
-  
-              <h3 className="sr-only">Summary</h3>
-  
-              <dl className="space-y-6 border-t border-gray-200 text-sm pt-10">
-                <div className="flex justify-between">
-                  <dt className="font-medium text-gray-900">Subtotal</dt>
-                  <dd className="text-gray-700">$36.00</dd>
-                </div>
-                <div className="flex justify-between">
-                  <dt className="flex font-medium text-gray-900">
-                    Discount
-                    <span className="rounded-full bg-gray-200 text-xs text-gray-600 py-0.5 px-2 ml-2">STUDENT50</span>
-                  </dt>
-                  <dd className="text-gray-700">-$18.00 (50%)</dd>
-                </div>
-                <div className="flex justify-between">
-                  <dt className="font-medium text-gray-900">Shipping</dt>
-                  <dd className="text-gray-700">$5.00</dd>
-                </div>
-                <div className="flex justify-between">
-                  <dt className="font-medium text-gray-900">Total</dt>
-                  <dd className="text-gray-900">$23.00</dd>
-                </div>
-              </dl>
-            </div>
-          </section>
-        </div>
-      </main>
+"use client";
+
+import { useState, useEffect } from "react";
+import Link from "next/link";
+
+const sampleStudents = [
+  { id: 1, name: "Alice Johnson", dob: "2005-06-15", dateJoined: "2020-09-01", graduated: false },
+  { id: 2, name: "Ethan Brown", dob: "2007-04-20", dateJoined: "2021-03-15", graduated: false },
+  { id: 3, name: "Sophia Davis", dob: "2006-11-30", dateJoined: "2019-01-10", graduated: true },
+  { id: 4, name: "Liam Wilson", dob: "2008-02-25", dateJoined: "2022-05-20", graduated: false },
+  { id: 5, name: "Olivia Martinez", dob: "2005-08-12", dateJoined: "2020-07-14", graduated: true },
+  { id: 6, name: "Noah Anderson", dob: "2006-09-05", dateJoined: "2019-11-22", graduated: false },
+  { id: 7, name: "Isabella Thomas", dob: "2007-12-18", dateJoined: "2021-06-30", graduated: false },
+  { id: 8, name: "Mason Jackson", dob: "2008-03-10", dateJoined: "2022-08-25", graduated: false },
+  { id: 9, name: "Mia White", dob: "2005-10-22", dateJoined: "2020-02-17", graduated: true },
+  { id: 10, name: "James Harris", dob: "2006-07-08", dateJoined: "2019-04-05", graduated: false },
+  { id: 11, name: "Ava Clark", dob: "2007-01-14", dateJoined: "2021-09-12", graduated: false },
+  { id: 12, name: "Lucas Lewis", dob: "2008-05-19", dateJoined: "2022-11-03", graduated: false },
+  { id: 13, name: "Amelia Robinson", dob: "2005-11-27", dateJoined: "2020-06-21", graduated: true },
+  { id: 14, name: "Benjamin Walker", dob: "2006-03-03", dateJoined: "2019-08-09", graduated: false },
+  { id: 15, name: "Charlotte Hall", dob: "2007-09-29", dateJoined: "2021-12-15", graduated: false },
+];
+
+export default function StudentManagement() {
+  const [students, setStudents] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortField, setSortField] = useState("name");
+  const [currentPage, setCurrentPage] = useState(1);
+  const studentsPerPage = 5;
+
+  useEffect(() => {
+    setStudents(sampleStudents);
+  }, []);
+
+  const handleSort = (field) => {
+    setSortField(field);
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+  };
+
+  const filteredStudents = students
+    .filter((student) =>
+      student.name.toLowerCase().includes(searchTerm.toLowerCase())
     )
-  }
-  
+    .sort((a, b) => {
+      let comparison = 0;
+      if (sortField === "name") {
+        comparison = a.name.localeCompare(b.name);
+      } else if (sortField === "dateJoined") {
+        comparison = new Date(a.dateJoined) - new Date(b.dateJoined);
+      } else if (sortField === "graduated") {
+        comparison = a.graduated === b.graduated ? 0 : a.graduated ? -1 : 1;
+      }
+      return sortOrder === "asc" ? comparison : -comparison;
+    });
+
+  const indexOfLastStudent = currentPage * studentsPerPage;
+  const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
+  const currentStudents = filteredStudents.slice(indexOfFirstStudent, indexOfLastStudent);
+
+  const nextPage = () => {
+    if (indexOfLastStudent < filteredStudents.length) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-6">
+      <h1 className="text-3xl font-bold text-gray-900 mb-6">Student Management</h1>
+
+      {/* Search and Sort Controls */}
+      <div className="mb-6 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+        <input
+          type="text"
+          placeholder="Search students..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="border rounded-md p-2 w-full sm:w-1/3"
+        />
+        <div className="flex space-x-4">
+          <button
+            onClick={() => handleSort("name")}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+          >
+            Sort by Name {sortField === "name" && (sortOrder === "asc" ? "↓" : "↑")}
+          </button>
+          <button
+            onClick={() => handleSort("dateJoined")}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+          >
+            Sort by Recently Added {sortField === "dateJoined" && (sortOrder === "asc" ? "↓" : "↑")}
+          </button>
+          <button
+            onClick={() => handleSort("graduated")}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+          >
+            Sort by Graduated {sortField === "graduated" && (sortOrder === "asc" ? "↓" : "↑")}
+          </button>
+        </div>
+      </div>
+
+      {/* Student List */}
+      <div className="bg-white shadow rounded-lg overflow-hidden">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase">
+                Name
+              </th>
+              <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase">
+                Date of Birth
+              </th>
+              <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase">
+                Date Joined
+              </th>
+              <th className="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase">
+                Graduated
+              </th>
+              <th className="px-6 py-3 text-right text-sm font-medium text-gray-500 uppercase">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            {currentStudents.map((student) => (
+              <tr key={student.id} className="hover:bg-gray-100">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {student.name}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {student.dob}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {student.dateJoined}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-center text-sm">
+                  <input type="checkbox" checked={student.graduated} readOnly />
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                  <Link
+                    href={`/SuperAdmin/Students/${student.id}`}
+                    className="text-indigo-600 hover:text-indigo-900"
+                  >
+                    View Details
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="mt-4 flex justify-between">
+        <button
+          onClick={prevPage}
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <button
+          onClick={nextPage}
+          disabled={indexOfLastStudent >= filteredStudents.length}
+          className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  );
+}
