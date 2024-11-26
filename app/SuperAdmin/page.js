@@ -63,7 +63,7 @@ function classNames(...classes) {
 export default function SuperAdminDashboard() {
   const [userRole, setUserRole] = useState('SuperAdmin'); 
   useEffect(() => {
-    // Fetch user role from an API or another source
+    
     const fetchUserRole = async () => {
       try {
         const response = await fetch('/api/user-role');
@@ -104,7 +104,7 @@ export default function SuperAdminDashboard() {
           <div className="mt-8">
             <h3 className="text-lg font-font font-medium">
               <a href={action.href} className="focus:outline-none">
-                {/* Extend touch target to entire panel */}
+            
                 <span className="absolute inset-0" aria-hidden="true" />
                 {action.title}
               </a>

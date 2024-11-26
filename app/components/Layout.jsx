@@ -82,6 +82,10 @@ const roleBasedNavigation = {
       name: "Finance",
       href: "/SuperAdmin/finance",
       icon: CashIcon,
+    }, {
+      name: "Student Management",
+      href: "/SuperAdmin/Students",
+      icon: CashIcon,
     },
   ],
 };
