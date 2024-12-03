@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-
+import Sidebar from "../../components/Sidebar";
 const sampleStudents = [
   { id: 1, name: "Alice Johnson", dob: "2005-06-15", dateJoined: "2020-09-01", graduated: false },
   { id: 2, name: "Ethan Brown", dob: "2007-04-20", dateJoined: "2021-03-15", graduated: false },
@@ -71,6 +71,7 @@ export default function StudentManagement() {
   };
 
   return (
+    <Sidebar>
     <div className="min-h-screen bg-gray-100 p-6">
       <h1 className="text-3xl font-bold text-gray-900 mb-6">Student Management</h1>
 
@@ -174,5 +175,6 @@ export default function StudentManagement() {
         </button>
       </div>
     </div>
+    </Sidebar>
   );
 }

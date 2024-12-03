@@ -10,7 +10,7 @@ import {
 } from '@heroicons/react/outline';
 
 import React, { useState, useEffect } from "react";
-import Layout from "@/app/components/Layout";
+import Layout from "@/app/components/Sidebar";
 const actions = [
   {
     title: 'Manage Users',

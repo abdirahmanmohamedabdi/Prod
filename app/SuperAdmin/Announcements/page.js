@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Layout from "@/app/components/Layout";
+import Sidebar from "../../components/Sidebar";
 
 const AnnouncementsPage = () => {
   const [announcements, setAnnouncements] = useState([
@@ -73,7 +73,7 @@ const AnnouncementsPage = () => {
   );
 
   return (
-    <Layout userRole={userRole}>
+  <Sidebar>
       <div className="p-6 space-y-6">
         <h1 className="text-2xl font-semibold">Announcements</h1>
 
@@ -154,7 +154,7 @@ const AnnouncementsPage = () => {
           )}
         </div>
       </div>
-    </Layout>
+   </Sidebar>
   );
 };
 

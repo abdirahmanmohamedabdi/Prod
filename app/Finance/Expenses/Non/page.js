@@ -1,7 +1,7 @@
 "use client";
-import Layout from "@/app/components/Layout";
-import { useState, useEffect } from "react";
 
+import { useState, useEffect } from "react";
+import Sidebar from "../../../components/Sidebar";
 // Example of fetching non-operating income data (simulated)
 const fetchNonOperatingIncome = () => {
     
@@ -60,7 +60,7 @@ export default function NonOperatingIncome() {
   const totalIncome = incomes.reduce((sum, income) => sum + income.amount, 0);
 
   return (
-    <Layout userRole={userRole}>
+    <Sidebar>
     <div className="p-6  min-h-screen">
       <h1 className="text-2xl font-bold font-font  mb-4 text-center">Non-Operating Income</h1>
       <table className="min-w-full bg-white border border-gray-200 rounded-lg">
@@ -132,6 +132,6 @@ export default function NonOperatingIncome() {
         </div>
       </div>
     </div>
-    </Layout>
+    </Sidebar>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Layout from "@/app/components/Layout";
+import Sidebar from "../../components/Sidebar";
 const ExpenseForm = ({ addExpense }) => {
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
@@ -181,7 +181,7 @@ const ExpensesPage = () => {
   );
 
   return (
-    <Layout userRole={userRole}>
+    <Sidebar>
     <div className="p-6 space-y-8">
       {/* Expense Form */}
       <h2 className="text-2xl font-font font-semibold">Add New Expense</h2>
@@ -246,7 +246,7 @@ const ExpensesPage = () => {
         </div>
       </div>
     </div>
-    </Layout>
+    </Sidebar>
   );
 };
 

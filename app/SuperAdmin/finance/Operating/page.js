@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 
-import Layout from "@/app/components/Layout";
+import Layout from "@/app/components/Sidebar";
 const fetchOperatingIncome = () => {
   return new Promise((resolve) => {
     setTimeout(() => {

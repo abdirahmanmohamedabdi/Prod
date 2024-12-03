@@ -1,5 +1,5 @@
 "use client";
-import Layout from "@/app/components/Layout";
+import Layout from "@/app/components/Sidebar";
 import { useState, useEffect } from "react";
 
 // Example of fetching non-operating income data (simulated)

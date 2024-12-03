@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import Layout from '@/app/components/Layout';
+import Sidebar from '../../../components/Sidebar';
 
 export default function CreateEmployeePage() {
   const [userRole, setUserRole] = useState('Finance'); // Set initial role to 'HR' for testing
@@ -61,7 +61,7 @@ export default function CreateEmployeePage() {
   };
 
   return (
-    <Layout userRole={userRole}>
+    <Sidebar >
       <div className="p-6">
         <h1 className="text-2xl font-font font-bold">Add employee</h1>
         <form onSubmit={handleSubmit}>
@@ -162,7 +162,7 @@ export default function CreateEmployeePage() {
           </div>
         </form>
       </div>
-    </Layout>
+    </Sidebar>
   );
 }
 

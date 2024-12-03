@@ -2,9 +2,9 @@
 import { ChevronDownIcon, SearchIcon, SortAscendingIcon } from '@heroicons/react/solid';
 import Link from "next/link";
 import { useState,useEffect } from "react";
-import Layout from '@/app/components/Layout';
+import Sidebar from '../../components/Sidebar';
 export default function StaffPage() {
-  // Dummy data for employees
+
   const employees = [
     {
       id: 1,
@@ -54,28 +54,13 @@ export default function StaffPage() {
       return b.name.localeCompare(a.name);
     }
   });
-  const [userRole, setUserRole] = useState('HR'); // Set initial role to 'HR' for testing
-
-  useEffect(() => {
-    // Fetch user role from an API or another source
-    const fetchUserRole = async () => {
-      try {
-        const response = await fetch('/api/user-role');
-        const data = await response.json();
-        setUserRole(data.role);
-      } catch (error) {
-        console.error('Error fetching user role:', error);
-      }
-    };
-
-    fetchUserRole();
-  }, []);
+  
   const handleSort = () => {
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   };
 
   return (
-    <Layout userRole={userRole}>
+<Sidebar>
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="pb-5 border-b border-gray-200 sm:flex sm:items-center sm:justify-between">
         <h3 className="text-lg leading-6 font-font font-medium text-gray-900">Staff Members</h3>
@@ -138,6 +123,6 @@ export default function StaffPage() {
         </table>
       </div>
     </div>
-    </Layout>
+    </Sidebar>
   );
 }

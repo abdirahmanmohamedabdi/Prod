@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-
+import Layout from '../components/Layout';
 export default function StudentManagement() {
   const [students, setStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -37,6 +37,7 @@ export default function StudentManagement() {
     });
 
   return (
+    <Layout>
     <div className="min-h-screen bg-gray-100 p-6">
       <h1 className="text-3xl font-bold text-gray-900 mb-6">Student Management</h1>
 
@@ -108,5 +109,6 @@ export default function StudentManagement() {
         </table>
       </div>
     </div>
+    </Layout>
   );
 }

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.5.1",
     "@fullcalendar/daygrid": "^6.1.15",
     "@fullcalendar/interaction": "^6.1.15",
     "@fullcalendar/react": "^6.1.15",
@@ -17,11 +18,12 @@
     "@heroicons/react": "^1.0.6",
     "@iconscout/react-unicons": "^2.0.2",
     "@react-pdf/renderer": "^4.1.4",
+    "@uploadthing/react": "^7.1.1",
     "bcrypt": "^5.1.1",
     "jspdf": "^2.5.2",
     "mongoose": "^8.7.1",
     "multer": "^1.4.5-lts.1",
-    "next": "14.2.14",
+    "next": "14.2.4",
     "next-auth": "^5.0.0-beta.22",
     "next-connect": "^1.0.0",
     "react": "^18",
@@ -30,7 +32,9 @@
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",
     "react-router-dom": "^6.28.0",
-    "react-toastify": "^10.0.6"
+    "react-spinners": "^0.14.1",
+    "react-toastify": "^10.0.6",
+    "uploadthing": "^7.3.0"
   },
   "devDependencies": {
     "@types/node": "22.7.4",

@@ -4,13 +4,18 @@ import {
   ClipboardListIcon,
   UserGroupIcon,
   CashIcon,
+  
   ChartBarIcon,
   SpeakerphoneIcon,
   CogIcon,
 } from '@heroicons/react/outline';
 
+import { Protect } from '@clerk/nextjs'
 import React, { useState, useEffect } from "react";
-import Layout from "@/app/components/Layout";
+import { useRouter } from 'next/navigation';
+
+import Sidebar from '../components/Sidebar';
+import { useUser } from '@clerk/nextjs';
 const actions = [
   {
     title: 'Manage Users',
@@ -61,23 +66,26 @@ function classNames(...classes) {
 }
 
 export default function SuperAdminDashboard() {
-  const [userRole, setUserRole] = useState('SuperAdmin'); 
-  useEffect(() => {
-    
-    const fetchUserRole = async () => {
-      try {
-        const response = await fetch('/api/user-role');
-        const data = await response.json();
-        setUserRole(data.role);
-      } catch (error) {
-        console.error('Error fetching user role:', error);
-      }
-    };
+  const { user, isLoaded } = useUser();
+  const router = useRouter();
 
-    fetchUserRole();
-  }, []);
+  useEffect(() => {
+    if (isLoaded && user?.publicMetadata?.role !== 'SuperAdmin') {
+      router.push('/sign-in');
+    }
+  }, [user, isLoaded, router]);
+
+  if (!isLoaded) {
+    return <div>Loading...</div>; // or a loading spinner
+  }
+
+  if (user?.publicMetadata?.role !== 'SuperAdmin') {
+    return null; // or a loading spinner
+  }
+
   return (
-    <Layout userRole={userRole}>
+    <Protect>
+<Sidebar>
     <div className="rounded-lg bg-gray-200 overflow-hidden shadow divide-y divide-gray-200 sm:divide-y-0 sm:grid sm:grid-cols-2 sm:gap-px">
       {actions.map((action, actionIdx) => (
         <div
@@ -129,6 +137,8 @@ export default function SuperAdminDashboard() {
         </div>
       ))}
     </div>
-    </Layout>
+    </Sidebar>
+    </Protect>
+    
   );
 }

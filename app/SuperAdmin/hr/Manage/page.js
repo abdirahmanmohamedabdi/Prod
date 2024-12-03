@@ -1,27 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Layout from "@/app/components/Layout";
+import Sidebar from "../../../components/Sidebar";
+
 export default function ManageUsers() {
   const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState(null);
   const [updatedUser, setUpdatedUser] = useState({});
   const [loading, setLoading] = useState(false);
-  const [userRole, setUserRole] = useState('SuperAdmin'); 
-  useEffect(() => {
-    // Fetch user role from an API or another source
-    const fetchUserRole = async () => {
-      try {
-        const response = await fetch('/api/user-role');
-        const data = await response.json();
-        setUserRole(data.role);
-      } catch (error) {
-        console.error('Error fetching user role:', error);
-      }
-    };
-
-    fetchUserRole();
-  }, []);
   // Fetch Users (Replace this with your backend API)
   useEffect(() => {
     const fetchUsers = async () => {
@@ -85,7 +71,7 @@ export default function ManageUsers() {
   };
 
   return (
-    <Layout userRole={userRole}>
+    <Sidebar>
     <div className="min-h-fit bg-gray-100 flex flex-col p-8">
       <h1 className="text-3xl font-semibold font-font text-gray-800 mb-6">Manage Users</h1>
 
@@ -203,6 +189,6 @@ export default function ManageUsers() {
         </div>
       )}
     </div>
-    </Layout>
+    </Sidebar>
   );
 }

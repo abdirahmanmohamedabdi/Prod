@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import jsPDF from "jspdf";
-import Layout from "@/app/components/Layout";
+import Sidebar from "../../components/Sidebar";
 
 const HRReportsPage = () => {
   const [reports, setReports] = useState([]);
@@ -100,7 +100,7 @@ const HRReportsPage = () => {
   };
 
   return (
-    <Layout userRole={userRole}>
+    <Sidebar>
       <div className="p-6 space-y-6">
         <h1 className="text-2xl font-semibold">HR Reports</h1>
 
@@ -197,7 +197,7 @@ const HRReportsPage = () => {
           )}
         </div>
       </div>
-    </Layout>
+    </Sidebar>
   );
 };
 

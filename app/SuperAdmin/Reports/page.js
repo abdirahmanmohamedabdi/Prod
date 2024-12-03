@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { jsPDF } from "jspdf";
-import Layout from "@/app/components/Layout";
+import Layout from '../components/Layout';
 const FinancialReportsPage = () => {
   const [reports, setReports] = useState([]);
   const [user, setUser] = useState(null); 
@@ -174,7 +174,7 @@ const FinancialReportsPage = () => {
   };
 
   return (
-    <Layout userRole={userRole}>
+    <Layout>
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Financial Reports</h1>
 

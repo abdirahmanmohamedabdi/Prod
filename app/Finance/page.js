@@ -9,7 +9,12 @@ import {
   CogIcon,
 } from '@heroicons/react/outline';
 import { useEffect, useState } from "react";
-import Layout from '../components/Layout';
+import { Protect, SignIn, SignInButton } from '@clerk/nextjs'
+import { useRouter } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
+import Sidebar from '../components/Sidebar';
+
+
 const actions = [
  
   {
@@ -49,23 +54,26 @@ function classNames(...classes) {
 
 export default function SuperAdminDashboard() {
   const [userRole, setUserRole] = useState('Finance'); // Set initial role to 'HR' for testing
+  const { user, isLoaded } = useUser();
+  const router = useRouter();
 
   useEffect(() => {
-    // Fetch user role from an API or another source
-    const fetchUserRole = async () => {
-      try {
-        const response = await fetch('/api/user-role');
-        const data = await response.json();
-        setUserRole(data.role);
-      } catch (error) {
-        console.error('Error fetching user role:', error);
-      }
-    };
+    if (isLoaded && user?.publicMetadata?.role !== 'Finance') {
+      router.push('/sign-in');
+    }
+  }, [user, isLoaded, router]);
 
-    fetchUserRole();
-  }, []);
+  if (!isLoaded) {
+    return <div>Loading...</div>; // or a loading spinner
+  }
+
+  if (user?.publicMetadata?.role !== 'Finance') {
+    return null; // or a loading spinner
+  }
+  
   return (
-    <Layout userRole={userRole}>
+    <Sidebar>
+<Protect >
     <div className="rounded-lg bg-gray-200 overflow-hidden shadow divide-y divide-gray-200 sm:divide-y-0 sm:grid sm:grid-cols-2 sm:gap-px">
       {actions.map((action, actionIdx) => (
         <div
@@ -117,6 +125,7 @@ export default function SuperAdminDashboard() {
         </div>
       ))}
     </div>
-    </Layout>
+    </Protect>
+    </Sidebar>
   );
 }

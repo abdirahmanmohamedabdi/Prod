@@ -7,11 +7,8 @@ import {
   CalendarIcon,
   BellIcon,
 } from "@heroicons/react/outline";
-import Layout from "@/app/components/Layout";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import interactionPlugin from "@fullcalendar/interaction";
+import Layout from "@/app/components/Sidebar";
+
 const userRole = "HR";
 import "react-calendar/dist/Calendar.css";   
 export default function HrAdminDashboard() {

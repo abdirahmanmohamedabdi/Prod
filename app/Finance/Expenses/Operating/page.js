@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 
-import Layout from "@/app/components/Layout";
+import Sidebar from "../../../components/Sidebar";
 const fetchOperatingIncome = () => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -58,7 +58,7 @@ export default function OperatingIncome() {
   const totalIncome = incomes.reduce((sum, income) => sum + income.amount, 0);
 
   return (
-    <Layout userRole={userRole}>
+    <Sidebar>
     <div className="p-6  min-h-screen">
       <h1 className="text-2xl font-bold mb-4 text-center">Operating Income</h1>
       <table className="min-w-full bg-white border border-gray-200 rounded-lg">
@@ -130,6 +130,6 @@ export default function OperatingIncome() {
         </div>
       </div>
     </div>
-    </Layout>
+    </Sidebar>
   );
 }

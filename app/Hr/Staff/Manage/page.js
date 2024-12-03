@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { PaperClipIcon } from "@heroicons/react/solid";
-import Layout from "@/app/components/Layout";
+import Sidebar from "../../../components/Sidebar";
 
 const employees = [
   {
@@ -64,7 +64,7 @@ export default function ManageUsers() {
     fetchUserRole();
   }, []);
   return (
-    <Layout userRole={userRole}>
+    <Sidebar>
     <div className="bg-white shadow overflow-hidden sm:rounded-lg">
       <div className="px-4 py-5 sm:px-6">
         <h3 className="text-lg leading-6 font-medium font-font text-gray-900">Manage Users</h3>
@@ -142,6 +142,6 @@ export default function ManageUsers() {
         </dl>
       </div>
     </div>
-  </Layout> 
+  </Sidebar> 
   );
 }

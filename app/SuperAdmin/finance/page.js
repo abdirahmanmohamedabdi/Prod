@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import Layout from "@/app/components/Layout";
+import Sidebar from "../../components/Sidebar";
 
 export default function FinancePage() {
   const [reports, setReports] = useState([]);
@@ -13,7 +13,20 @@ export default function FinancePage() {
   const [selectedYear, setSelectedYear] = useState("All");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [userRole, setUserRole] = useState('SuperAdmin');
+  useEffect(() => {
+    // Fetch user role from an API or another source
+    const fetchUserRole = async () => {
+      try {
+        const response = await fetch('/api/user-role');
+        const data = await response.json();
+        setUserRole(data.role);
+      } catch (error) {
+        console.error('Error fetching user role:', error);
+      }
+    };
 
+    fetchUserRole();
+  }, []);
   // Fetch finance reports (Replace with your backend API)
   useEffect(() => {
     const fetchReports = async () => {
@@ -121,7 +134,7 @@ export default function FinancePage() {
   ];
 
   return (
-    <Layout userRole={userRole}>
+    <Sidebar>
       <div className="min-h-screen bg-gray-50 p-6">
         <h1 className="text-3xl font-semibold text-gray-800 mb-6">Finance Reports</h1>
 
@@ -228,6 +241,6 @@ export default function FinancePage() {
           )}
         </div>
       </div>
-    </Layout>
+      </Sidebar>
   );
 }

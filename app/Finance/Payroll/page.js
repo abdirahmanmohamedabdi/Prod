@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 
-import Team from '@/app/components/Teamer';
-import Layout from '@/app/components/Layout';
+import Teamer from '../../components/Teamer';
+import Sidebar from '../../components/Sidebar';
 const userRole = "HR";
 export default function Staff() {
   const [userRole, setUserRole] = useState('Finance'); // Set initial role to 'HR' for testing
@@ -24,11 +24,11 @@ export default function Staff() {
   }, []);
 
   return (
-<Layout userRole={userRole}>
+<Sidebar >
       <div className="p-6">
         <h1 className="text-2xl font-bold">Staff</h1>
-        <Team/>
+        <Teamer/>
       </div>
-    </Layout>
+    </Sidebar>
   );
 }

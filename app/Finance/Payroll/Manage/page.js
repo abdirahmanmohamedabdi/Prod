@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-import Layout from '@/app/components/Layout';
+import Sidebar from '../../../components/Sidebar';
 const userRole = "Finance";
 const testUsers = [
   { id: 1, name: 'Jane Cooper', title: 'Regional Paradigm Technician', role: 'Admin', email: 'jane.cooper@example.com' },
@@ -49,7 +49,7 @@ const ManageUsersPage = () => {
   };
 
   return (
-    <Layout userRole={userRole}>
+    <Sidebar>
       <div className="flex flex-col">
       <h1 className="text-2xl font-bold font-font text-center mb-6">Manage Employees</h1>
         <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -117,7 +117,7 @@ const ManageUsersPage = () => {
           </div>
         </div>
       </div>
-    </Layout>
+    </Sidebar>
   );
 };
 

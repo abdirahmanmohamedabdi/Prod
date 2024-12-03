@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation"; // Import from next/navigation
 import { useEffect, useState } from "react";
-
+import Sidebar from "../../../components/Sidebar";
 // Sample student data
 const sampleStudents = [
   { id: 1, name: "Alice Johnson", dob: "2005-06-15", dateJoined: "2020-09-01", graduated: false },
@@ -57,6 +57,7 @@ export default function StudentDetailsPage({ params }) {
   }
 
   return (
+    <Sidebar>
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="bg-white shadow rounded-lg p-6">
         <h1 className="text-2xl font-bold text-gray-800 mb-4">Student Details</h1>
@@ -80,5 +81,6 @@ export default function StudentDetailsPage({ params }) {
         </div>
       </div>
     </div>
+    </Sidebar>
   );
 }

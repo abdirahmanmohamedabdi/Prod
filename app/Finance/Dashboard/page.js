@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { UilArrowUp, UilArrowDown, UilDollarSign } from "@iconscout/react-unicons";
-import Layout from "@/app/components/Layout";
+import Layout from "@/app/components/Sidebar";
 // Example of fetching financial data (simulated)
 const fetchFinanceData = () => {
   return new Promise((resolve) => {
