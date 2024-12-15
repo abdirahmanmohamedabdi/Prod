@@ -1,86 +1,141 @@
 "use client";
 
-import { useRouter } from "next/navigation"; // Import from next/navigation
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { PaperClipIcon } from "@heroicons/react/solid";
 import Sidebar from "../../../components/Sidebar";
-// Sample student data
-const sampleStudents = [
-  { id: 1, name: "Alice Johnson", dob: "2005-06-15", dateJoined: "2020-09-01", graduated: false },
-  { id: 2, name: "Ethan Brown", dob: "2007-04-20", dateJoined: "2021-03-15", graduated: false },
-  { id: 3, name: "Sophia Davis", dob: "2006-11-30", dateJoined: "2019-01-10", graduated: true },
-  { id: 4, name: "Liam Wilson", dob: "2008-02-25", dateJoined: "2022-05-20", graduated: false },
-  { id: 5, name: "Olivia Martinez", dob: "2005-08-12", dateJoined: "2020-07-14", graduated: true },
-  { id: 6, name: "Noah Anderson", dob: "2006-09-05", dateJoined: "2019-11-22", graduated: false },
-  { id: 7, name: "Isabella Thomas", dob: "2007-12-18", dateJoined: "2021-06-30", graduated: false },
-  { id: 8, name: "Mason Jackson", dob: "2008-03-10", dateJoined: "2022-08-25", graduated: false },
-  { id: 9, name: "Mia White", dob: "2005-10-22", dateJoined: "2020-02-17", graduated: true },
-  { id: 10, name: "James Harris", dob: "2006-07-08", dateJoined: "2019-04-05", graduated: false },
-  { id: 11, name: "Ava Clark", dob: "2007-01-14", dateJoined: "2021-09-12", graduated: false },
-  { id: 12, name: "Lucas Lewis", dob: "2008-05-19", dateJoined: "2022-11-03", graduated: false },
-  { id: 13, name: "Amelia Robinson", dob: "2005-11-27", dateJoined: "2020-06-21", graduated: true },
-  { id: 14, name: "Benjamin Walker", dob: "2006-03-03", dateJoined: "2019-08-09", graduated: false },
-  { id: 15, name: "Charlotte Hall", dob: "2007-09-29", dateJoined: "2021-12-15", graduated: false },
-];
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import supabase from "../../../lib/supabaseClient"; // Ensure correct import path
 
-export default function StudentDetailsPage({ params }) {
-  const { id } = params;  // Accessing the `id` directly from params
-  const [student, setStudent] = useState(null);
+export default function StudentDetailsPage() {
+  const { id } = useParams(); // Get the id parameter from the URL
+  const [student, setStudent] = useState(null); // Store the fetched student
   const [loading, setLoading] = useState(true);
 
-  // Fetch student details based on `id`
   useEffect(() => {
-    const fetchStudentDetails = async () => {
-      try {
-        // Simulate an API call to fetch student details
-        const fetchedStudent = sampleStudents.find((s) => s.id === parseInt(id));
-        if (fetchedStudent) {
-          setStudent(fetchedStudent);
-        } else {
-          throw new Error("Student not found");
+    const fetchStudent = async () => {
+      const { data, error } = await supabase
+        .from("students")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching student:", error.message);
+        toast.error("Failed to fetch student");
+      } else {
+        if (data?.student_files) {
+          // Determine if `student_files` contains JSON strings or plain URLs
+          data.student_files = data.student_files.map((file) => {
+            try {
+              return JSON.parse(file); // Attempt to parse JSON
+            } catch (e) {
+              return { url: file, name: "Unknown Document" }; // Fallback for plain strings
+            }
+          });
         }
-      } catch (error) {
-        console.error("Error fetching student details:", error);
-      } finally {
-        setLoading(false);
+        setStudent(data);
       }
+      setLoading(false);
     };
 
-    fetchStudentDetails();
+    fetchStudent();
   }, [id]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <Sidebar>
+        <div className="min-h-screen bg-gray-100 p-6">
+          <ToastContainer />
+          <h1 className="text-3xl font-bold text-gray-800 mb-6">Loading...</h1>
+        </div>
+      </Sidebar>
+    );
   }
 
   if (!student) {
-    return <div>Student not found</div>;
+    return (
+      <Sidebar>
+        <div className="min-h-screen bg-gray-100 p-6">
+          <ToastContainer />
+          <h1 className="text-3xl font-bold text-gray-800 mb-6">Student not found</h1>
+        </div>
+      </Sidebar>
+    );
   }
 
   return (
     <Sidebar>
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="bg-white shadow rounded-lg p-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">Student Details</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-700">Name</h2>
-            <p className="text-gray-900">{student.name}</p>
-          </div>
-          <div>
-            <h2 className="text-lg font-semibold text-gray-700">Date of Birth</h2>
-            <p className="text-gray-900">{student.dob}</p>
-          </div>
-          <div>
-            <h2 className="text-lg font-semibold text-gray-700">Date Joined</h2>
-            <p className="text-gray-900">{student.dateJoined}</p>
-          </div>
-          <div>
-            <h2 className="text-lg font-semibold text-gray-700">Graduated</h2>
-            <p className="text-gray-900">{student.graduated ? "Yes" : "No"}</p>
-          </div>
+      <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div className="px-4 py-5 sm:px-6">
+          <h3 className="text-lg leading-6 font-font font-medium text-gray-900">Student Information</h3>
+          <p className="mt-1 max-w-2xl text-sm font-font text-gray-500">Personal details and application.</p>
+        </div>
+        <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
+          <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+            {/* Student details */}
+            <div className="sm:col-span-1">
+              <dt className="text-sm font-medium font-font text-gray-500">Admission Number</dt>
+              <dd className="mt-1 text-sm font-font text-gray-900">{student.admission_number}</dd>
+            </div>
+            <div className="sm:col-span-1">
+              <dt className="text-sm font-medium font-font text-gray-500">Full name</dt>
+              <dd className="mt-1 text-sm font-font text-gray-900">{student.first_name} {student.last_name}</dd>
+            </div>
+            <div className="sm:col-span-1">
+              <dt className="text-sm font-medium font-font text-gray-500">Date of Birth</dt>
+              <dd className="mt-1 text-sm font-font text-gray-900">{student.dob}</dd>
+            </div>
+            <div className="sm:col-span-1">
+              <dt className="text-sm font-medium font-font text-gray-500">Has Graduated</dt>
+              <dd className="mt-1 text-sm font-font text-gray-900">{student.has_graduated ? "Yes" : "No"}</dd>
+            </div>
+            <div className="sm:col-span-1">
+              <dt className="text-sm font-medium font-font text-gray-500">Parent Name</dt>
+              <dd className="mt-1 text-sm font-font text-gray-900">{student.parent_details.name}</dd>
+            </div>
+            <div className="sm:col-span-1">
+              <dt className="text-sm font-medium font-font text-gray-500">Parent Phone</dt>
+              <dd className="mt-1 text-sm font-font text-gray-900">{student.parent_details.phone}</dd>
+            </div>
+            <div className="sm:col-span-1">
+              <dt className="text-sm font-medium font-font text-gray-500">Alternative Phone</dt>
+              <dd className="mt-1 text-sm font-font text-gray-900">{student.parent_details.alt_phone}</dd>
+            </div>
+            <div className="sm:col-span-1">
+              <dt className="text-sm font-medium font-font text-gray-500">Date Joined</dt>
+              <dd className="mt-1 text-sm font-font text-gray-900">{student.date_joined}</dd>
+            </div>
+            {/* Attachments */}
+            <div className="sm:col-span-2">
+              <dt className="text-sm font-medium font-font text-gray-500">Attachments</dt>
+              <dd className="mt-1 text-sm text-gray-900">
+                <ul role="list" className="border border-gray-200 rounded-md divide-y divide-gray-200">
+                  {student.student_files &&
+                    student.student_files.map((fileData, index) => (
+                      <li key={index} className="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
+                        <div className="w-0 flex-1 flex items-center">
+                          <PaperClipIcon className="flex-shrink-0 h-5 w-5 text-gray-400" aria-hidden="true" />
+                          <span className="ml-2 flex-1 w-0 font-font truncate">{fileData.name || `Document ${index + 1}`}</span>
+                        </div>
+                        <div className="ml-4 flex-shrink-0">
+                          <a
+                            href={fileData.url}
+                            className="font-medium text-indigo-600 font-font hover:text-indigo-500"
+                            download
+                          >
+                            Download
+                          </a>
+                        </div>
+                      </li>
+                    ))}
+                </ul>
+              </dd>
+            </div>
+          </dl>
         </div>
       </div>
-    </div>
     </Sidebar>
   );
 }

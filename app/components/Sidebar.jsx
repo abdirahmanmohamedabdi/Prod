@@ -1,23 +1,17 @@
 "use client";
 import { Fragment, useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { UilAngleDown, UilDollarSign, UilFile } from "@iconscout/react-unicons";
 import {
-  BellIcon,
-  CalendarIcon,
-  ChartBarIcon,
-  FolderIcon,
-  HomeIcon,
-  InboxIcon,
-  MenuAlt2Icon,
   UsersIcon,
   CashIcon,
   XIcon,
   SpeakerphoneIcon,
   DocumentIcon,
 } from "@heroicons/react/outline";
+import { ChevronDownIcon } from "@heroicons/react/solid";
 import { useUser, UserButton } from "@clerk/nextjs";
-import { usePathname } from "next/navigation"; // Ensure usePathname is imported
+import { usePathname } from "next/navigation";
+import { Bus, HandCoins, FileStack, ChevronDown, Banknote, Wallet, Landmark } from "lucide-react";
 
 const roleBasedNavigation = {
   Hr: [
@@ -38,24 +32,37 @@ const roleBasedNavigation = {
   ],
   Finance: [
     {
+      name: "Finance",
+      href: "/Finance",
+      icon: Landmark,
+    },
+    {
       name: "Payroll",
       href: "/Finance/Expenses/Payroll",
-      icon: UilDollarSign,
-      
+      icon: Banknote,
     },
     {
       name: "Expenses",
       href: "/Finance/Expenses",
-      icon: UilDollarSign,
+      icon: HandCoins,
       subLinks: [
-        { name: "Operating income", href: "/Finance/Expenses/Operating" },
-        { name: "Non Operating income", href: "/Finance/Expenses/Non" },
+        { name: "Add Expense", href: "/Finance/Expenses/Create" },
+        { name: "Manage Expenses", href: "/Finance/Expenses/Manage" },
+      ],
+    },
+    {
+      name: "Incomes",
+      href: "/Finance/Incomes",
+      icon: Wallet,
+      subLinks: [
+        { name: "Non-Operating Income ", href: "/Finance/Incomes/Non" },
+        { name: "Operating Income", href: "/Finance/Incomes/Operating" },
       ],
     },
     {
       name: "Reports",
       href: "/Finance/Reports",
-      icon: UilFile,
+      icon: FileStack,
     },
   ],
   SuperAdmin: [
@@ -76,16 +83,32 @@ const roleBasedNavigation = {
     {
       name: "Finance",
       href: "/SuperAdmin/finance",
-      icon: CashIcon,
+      icon: HandCoins,
       subLinks: [{ name: "Fees", href: "/SuperAdmin/finance/Fees" }],
     },
     {
       name: "Student Management",
       href: "/SuperAdmin/Students",
-      icon: CashIcon,
+      icon: UsersIcon,
+      subLinks: [
+        { name: "Create", href: "/SuperAdmin/Students/Create" },
+        { name: "Manage", href: "/SuperAdmin/Students/Manage" },
+      ],
+    },
+    {
+      name: "Transport",
+      href: "/SuperAdmin/Transport",
+      icon: Bus,
+      subLinks: [
+        { name: "Bus", href: "/SuperAdmin/Transport/Bus" },
+        { name: "Driver", href: "/SuperAdmin/Transport/Drivers" },
+        { name: "Route", href: "/SuperAdmin/Transport/Route" },
+        { name: "Fuel", href: "/SuperAdmin/Transport/FuelExpenses" },
+      ],
     },
   ],
 };
+
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -108,22 +131,15 @@ export default function Sidebar({ children }) {
     setExpandedMenu(expandedMenu === itemName ? null : itemName);
   };
 
-  const isActive = (href) => pathname.startsWith(href);
+  const isActive = (href) => pathname === href;
 
   const navigation = roleBasedNavigation[userRole] || [];
 
-  if (!isLoaded) {
-    return <div>Loading...</div>; // or a loading spinner
-  }
-
   return (
     <>
+      {/* Mobile Sidebar */}
       <Transition.Root show={sidebarOpen} as={Fragment}>
-        <Dialog
-          as="div"
-          className="fixed inset-0 flex z-40 md:hidden"
-          onClose={setSidebarOpen}
-        >
+        <Dialog as="div" className="relative z-50 md:hidden" onClose={setSidebarOpen}>
           <Transition.Child
             as={Fragment}
             enter="transition-opacity ease-linear duration-300"
@@ -133,92 +149,72 @@ export default function Sidebar({ children }) {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Dialog.Overlay className="fixed inset-0 bg-gray-600 bg-opacity-75" />
+            <div className="fixed inset-0 bg-gray-800 bg-opacity-75" />
           </Transition.Child>
-          <Transition.Child
-            as={Fragment}
-            enter="transition ease-in-out duration-300 transform"
-            enterFrom="-translate-x-full"
-            enterTo="translate-x-0"
-            leave="transition ease-in-out duration-300 transform"
-            leaveFrom="translate-x-0"
-            leaveTo="-translate-x-full"
-          >
-            <div className="relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-indigo-700">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-in-out duration-300"
-                enterFrom="opacity-0"
-                enterTo="opacity-100"
-                leave="ease-in-out duration-300"
-                leaveFrom="opacity-100"
-                leaveTo="opacity-0"
-              >
-                <div className="absolute top-0 right-0 -mr-12 pt-2">
+          <div className="fixed inset-0 flex">
+            <Transition.Child
+              as={Fragment}
+              enter="transition ease-in-out duration-300 transform"
+              enterFrom="-translate-x-full"
+              enterTo="translate-x-0"
+              leave="transition ease-in-out duration-300 transform"
+              leaveFrom="translate-x-0"
+              leaveTo="-translate-x-full"
+            >
+              <Dialog.Panel className="relative flex w-full max-w-xs flex-col bg-white pb-4 shadow-xl">
+                <div className="flex justify-between px-4 pt-5">
+                  <img className="h-12 w-auto" src="/logo1.png" alt="Workflow" />
                   <button
                     type="button"
-                    className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                    className="-mr-2 p-2 text-gray-400 hover:text-gray-500"
                     onClick={() => setSidebarOpen(false)}
                   >
                     <span className="sr-only">Close sidebar</span>
-                    <XIcon className="h-6 w-6 text-white" aria-hidden="true" />
+                    <XIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
                 </div>
-              </Transition.Child>
-              <div className="flex-shrink-0 flex items-center px-4">
-                <img className="h-8 w-auto" src="/logo1.png" alt="Workflow" />
-              </div>
-              <div className="mt-5 flex-1 h-0 overflow-y-auto">
-                <nav className="px-2 space-y-1">
-                  {navigation.map((item) => (
-                    <div key={item.name}>
-                      <div className="flex items-center">
-                        <a
-                          href={item.href}
-                          className={classNames(
-                            isActive(item.href)
-                              ? "bg-indigo-800 text-three"
-                              : "text-one hover:bg-indigo-600",
-                            "group flex items-center px-2 py-2 text-base font-medium rounded-md"
-                          )}
-                        >
-                          <item.icon
-                            className="mr-4 flex-shrink-0 h-6 w-6 text-three"
-                            aria-hidden="true"
-                          />
-                          {item.name}
-                        </a>
-                        {item.subLinks && (
-                          <button
-                            className="ml-2 text-two hover:text-white"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              toggleSubLinks(item.name);
-                            }}
-                            aria-expanded={expandedMenu === item.name}
+                <div className="mt-5 flex-1 overflow-y-auto">
+                  <nav className="px-2 space-y-1">
+                    {navigation.map((item) => (
+                      <div key={item.name}>
+                        <div className="flex items-center justify-between">
+                          <a
+                            href={item.href}
+                            className={classNames(
+                              isActive(item.href)
+                                ? "bg-indigo-600 text-white"
+                                : "text-gray-600 hover:bg-gray-100",
+                              "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+                            )}
                           >
-                            <UilAngleDown
-                              className={`transition-transform ${
-                                expandedMenu === item.name
-                                  ? "rotate-180"
-                                  : "rotate-0"
-                              }`}
-                            />
-                          </button>
-                        )}
-                      </div>
-                      {item.subLinks &&
-                        (expandedMenu === item.name || isActive(item.href)) && (
+                            <item.icon className="mr-3 h-6 w-6 text-gray-400" aria-hidden="true" />
+                            {item.name}
+                          </a>
+                          {item.subLinks && (
+                            <button
+                              onClick={() => toggleSubLinks(item.name)}
+                              className="ml-2 text-gray-400 hover:text-gray-600 flex-shrink-0"
+                              aria-expanded={expandedMenu === item.name}
+                            >
+                              <ChevronDownIcon
+                                className={`h-4 w-4 transition-transform ${
+                                  expandedMenu === item.name ? "rotate-180" : "rotate-0"
+                                }`}
+                              />
+                            </button>
+                          )}
+                        </div>
+                        {item.subLinks && expandedMenu === item.name && (
                           <div className="ml-8 mt-2 space-y-1">
                             {item.subLinks.map((subLink) => (
                               <a
                                 key={subLink.name}
                                 href={subLink.href}
                                 className={classNames(
-                                  pathname === subLink.href
-                                    ? "text-indigo-600"
-                                    : "text-indigo-100 hover:bg-indigo-600",
-                                  "block px-2 py-2 text-sm font-medium rounded-md"
+                                  isActive(subLink.href)
+                                    ? "bg-indigo-600 text-white"
+                                    : "text-gray-600 hover:bg-gray-100",
+                                  "block px-2 py-1 text-sm font-medium rounded-md"
                                 )}
                               >
                                 {subLink.name}
@@ -226,100 +222,97 @@ export default function Sidebar({ children }) {
                             ))}
                           </div>
                         )}
-                    </div>
-                  ))}
-                </nav>
-              </div>
-              <div className="flex-shrink-0 flex items-center px-4 py-4 bg-indigo-800">
-                <UserButton />
-              </div>
-            </div>
-          </Transition.Child>
-          <div className="flex-shrink-0 w-14" aria-hidden="true">
-            {/* Dummy element to force sidebar to shrink to fit close icon */}
+                      </div>
+                    ))}
+                  </nav>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
           </div>
         </Dialog>
       </Transition.Root>
 
-      {/* Static sidebar for desktop */}
-      <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
-        <div className="flex flex-col flex-grow pt-5 bg-white overflow-y-auto">
-          <div className="flex items-center flex-shrink-0 px-4">
+      {/* Desktop Sidebar */}
+      <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 bg-gray-50 border-r border-gray-200">
+        <div className="flex flex-col flex-1 min-h-0">
+          <div className="flex items-center h-16 flex-shrink-0 px-4 ">
             <img className="h-12 w-auto" src="/logo1.png" alt="Workflow" />
           </div>
-          <div className="mt-5 flex-1 flex flex-col">
-            <nav className="flex-1 px-2 pb-4 space-y-1">
+          <div className="flex-1 flex flex-col overflow-y-auto">
+            <nav className="flex-1 px-2 py-4 space-y-1">
               {navigation.map((item) => (
                 <div key={item.name}>
-                  <div className="flex items-center">
+                  <div className="flex items-center justify-between">
                     <a
                       href={item.href}
                       className={classNames(
                         isActive(item.href)
-                          ? "bg-white text-two"
-                          : "text-two hover:bg-indigo-600",
-                        "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+                          ? "bg-one text-white"
+                          : "text-four font-font hover:bg-gray-100",
+                        "group flex items-center px-2 py-2 font-font text-sm font-medium rounded-md"
                       )}
                     >
-                      <item.icon
-                        className="mr-3 flex-shrink-0 h-6 w-6 text-two"
-                        aria-hidden="true"
-                      />
+                      <item.icon className="mr-3 h-6 w-12 text-four" aria-hidden="true" />
                       {item.name}
                     </a>
                     {item.subLinks && (
                       <button
-                        className="ml-2 text-two hover:text-white"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          toggleSubLinks(item.name);
-                        }}
+                        onClick={() => toggleSubLinks(item.name)}
+                        className="ml-2 text-gray-400 hover:text-gray-600 flex-shrink-0"
                         aria-expanded={expandedMenu === item.name}
                       >
-                        <UilAngleDown
-                          className={`transition-transform ${
-                            expandedMenu === item.name
-                              ? "rotate-180"
-                              : "rotate-0"
+                        <ChevronDownIcon
+                          className={`h-4 w-4 transition-transform ${
+                            expandedMenu === item.name ? "rotate-180" : "rotate-0"
                           }`}
                         />
                       </button>
                     )}
                   </div>
-                  {item.subLinks &&
-                    (expandedMenu === item.name || isActive(item.href)) && (
-                      <div className="ml-8 mt-2 space-y-1">
-                        {item.subLinks.map((subLink) => (
-                          <a
-                            key={subLink.name}
-                            href={subLink.href}
-                            className={classNames(
-                              pathname === subLink.href
-                                ? "text-one"
-                                : "text-three hover:bg-indigo-600",
-                              "block px-2 py-2 text-sm font-medium rounded-md"
-                            )}
-                          >
-                            {subLink.name}
-                          </a>
-                        ))}
-                      </div>
-                    )}
+                  {item.subLinks && expandedMenu === item.name && (
+                    <div className="ml-8 mt-2 space-y-1">
+                      {item.subLinks.map((subLink) => (
+                        <a
+                          key={subLink.name}
+                          href={subLink.href}
+                          className={classNames(
+                            isActive(subLink.href)
+                              ? "bg-indigo-600 text-white"
+                              : "text-gray-600 hover:bg-gray-100",
+                            "block px-2 py-1 text-sm font-medium rounded-md"
+                          )}
+                        >
+                          {subLink.name}
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </nav>
           </div>
-          <div className="flex-shrink-0 flex items-center px-4 py-4 bg-one">
-            <UserButton />
-          </div>
         </div>
       </div>
-      <div className="md:pl-64 flex flex-col flex-1">
-        <main>
-          {children}
 
-          {/* /End replace */}
-        </main>
+      {/* Content Area */}
+      <div className="md:pl-64">
+        <div className="flex flex-col flex-1">
+          <header className="sticky top-0 z-10 flex h-16 bg-white shadow md:hidden">
+            <button
+              type="button"
+              className="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <span className="sr-only">Open sidebar</span>
+              <XIcon className="h-6 w-6" aria-hidden="true" />
+            </button>
+            <div className="flex-1 flex justify-between items-center px-4">
+              <h1 className="text-lg font-medium text-gray-900">Dashboard</h1>
+              <UserButton />
+            </div>
+          </header>
+          <main>{children}</main>
+        </div>
       </div>
     </>
   );

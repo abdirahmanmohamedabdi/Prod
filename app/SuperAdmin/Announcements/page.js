@@ -1,161 +1,175 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import Sidebar from "../../components/Sidebar";
 
-const AnnouncementsPage = () => {
-  const [announcements, setAnnouncements] = useState([
-    { id: 1, title: "Office Closed", content: "The office will be closed on Friday for maintenance.", date: "2024-11-01", role: "all" },
-    { id: 2, title: "New Policy", content: "Please review the new company policy on remote work.", date: "2024-11-05", role: "all" },
-    { id: 3, title: "Finance Meeting", content: "There will be a finance meeting on Monday.", date: "2024-11-07", role: "Finance" },
-    { id: 4, title: "HR Training", content: "HR training session on Wednesday.", date: "2024-11-09", role: "HR" },
-  ]);
-  const [newAnnouncement, setNewAnnouncement] = useState({
-    title: "",
-    content: "",
-    role: "all",
-  });
-  const [successMessage, setSuccessMessage] = useState("");
-  const [userRole, setUserRole] = useState('SuperAdmin'); // Set initial role to 'HR' for testing
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Sidebar from "../../components/Sidebar";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import supabase from "../../lib/supabaseClient"; // Ensure correct import path
+import { useUser } from "@clerk/nextjs"; // Import Clerk's useUser hook
+
+export default function AnnouncementsPage() {
+  const [announcements, setAnnouncements] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [title, setTitle] = useState("");
+  const [message, setMessage] = useState("");
+  const [role, setRole] = useState("");
+  const [sendToAllRoles, setSendToAllRoles] = useState(false);
+  const { user } = useUser(); // Get the current user from Clerk
+  const router = useRouter();
 
   useEffect(() => {
-    // Fetch previous announcements from an API
     const fetchAnnouncements = async () => {
-      try {
-        const response = await fetch('/api/announcements');
-        const data = await response.json();
+      const { data, error } = await supabase
+        .from("announcements")
+        .select("*")
+        .order("date", { ascending: false }); // Order by date in descending order
+
+      if (error) {
+        console.error("Error fetching announcements:", error.message);
+        toast.error("Failed to fetch announcements");
+      } else {
         setAnnouncements(data);
-      } catch (error) {
-        console.error('Error fetching announcements:', error);
       }
+      setLoading(false);
     };
 
     fetchAnnouncements();
   }, []);
 
-  useEffect(() => {
-    // Fetch user role from an API or another source
-    const fetchUserRole = async () => {
-      try {
-        const response = await fetch('/api/user-role');
-        const data = await response.json();
-        setUserRole(data.role);
-      } catch (error) {
-        console.error('Error fetching user role:', error);
-      }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const newAnnouncement = {
+      title,
+      message,
+      createdBy: user.fullName, // Set the createdBy field to the user's full name
+      role: sendToAllRoles ? "All" : role,
+      date: new Date().toISOString(),
     };
 
-    fetchUserRole();
-  }, []);
+    const { error } = await supabase
+      .from("announcements")
+      .insert([newAnnouncement]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewAnnouncement((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handlePostAnnouncement = async () => {
-    try {
-      // Mock POST response for testing purposes
-      const createdAnnouncement = { ...newAnnouncement, id: announcements.length + 1, date: new Date().toISOString().split("T")[0] }; // Mock created announcement with an ID and date
-      setAnnouncements((prevAnnouncements) => [...prevAnnouncements, createdAnnouncement]);
-      setNewAnnouncement({ title: "", content: "", role: "all" });
-      setSuccessMessage("Announcement posted successfully!");
-      setTimeout(() => setSuccessMessage(""), 3000); // Clear success message after 3 seconds
-    } catch (error) {
-      console.error("Error posting announcement:", error);
+    if (error) {
+      console.error("Error creating announcement:", error.message);
+      toast.error("Failed to create announcement");
+    } else {
+      toast.success("Announcement created successfully");
+      setTitle("");
+      setMessage("");
+      setRole("");
+      setSendToAllRoles(false);
+      window.location.reload(); // Reload the page
     }
   };
 
-  const filteredAnnouncements = announcements.filter(
-    (announcement) => announcement.role === "all" || announcement.role === userRole
-  );
+  if (loading) {
+    return (
+      <Sidebar>
+        <div className="min-h-screen bg-gray-100 p-6">
+          <ToastContainer />
+          <h1 className="text-3xl font-bold text-gray-800 mb-6">Loading...</h1>
+        </div>
+      </Sidebar>
+    );
+  }
 
   return (
-  <Sidebar>
-      <div className="p-6 space-y-6">
-        <h1 className="text-2xl font-semibold">Announcements</h1>
-
-        {/* New Announcement Form */}
-        <div className="space-y-4 bg-white p-6 shadow rounded-md">
-          <h2 className="text-xl font-font font-semibold">Post New Announcement</h2>
-          <div className="space-y-2">
-            <label className="block text-sm font-font font-medium">Title</label>
+    <Sidebar>
+      <div className="min-h-screen bg-gray-100 p-6">
+        <ToastContainer />
+        <h1 className="text-3xl font-bold text-gray-800 font-font mb-6">Announcements</h1>
+        
+        {/* Create Announcement Form */}
+        <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 shadow rounded-md">
+          <div>
+            <label htmlFor="title" className="block text-sm font-font font-medium text-gray-700">
+              Title
+            </label>
             <input
               type="text"
-              name="title"
-              value={newAnnouncement.title}
-              onChange={handleInputChange}
-              className="w-full p-2 border rounded-md"
-              placeholder="Enter announcement title"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 font-font rounded-md"
               required
             />
           </div>
-          <div className="space-y-2">
-            <label className="block font-font text-sm font-medium">Content</label>
+          <div>
+            <label htmlFor="message" className="block text-sm font-font font-medium text-gray-700">
+              Message
+            </label>
             <textarea
-              name="content"
-              value={newAnnouncement.content}
-              onChange={handleInputChange}
-              className="w-full p-2 border rounded-md"
-              rows="4"
-              placeholder="Enter announcement content"
+              id="message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 font-font rounded-md"
               required
-            ></textarea>
+            />
           </div>
-          <div className="space-y-2">
-            <label className="block text-sm font-font font-medium">Role</label>
+          <div>
+            <label htmlFor="role" className="block text-sm font-medium font-font text-gray-700">
+              Role
+            </label>
             <select
-              name="role"
-              value={newAnnouncement.role}
-              onChange={handleInputChange}
-              className="w-full p-2 border rounded-md"
+              id="role"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 font-font rounded-md"
+              required={!sendToAllRoles}
+              disabled={sendToAllRoles}
             >
-              <option value="all">All</option>
-              <option value="HR">HR</option>
-              <option value="Finance">Finance</option>
+              <option value="" className="font-font">Select Role</option>
+              <option value="HR" className="font-font">HR</option>
+              <option value="Finance" className="font-font">Finance</option>
+              <option value="SuperAdmin" className="font-font">SuperAdmin</option>
             </select>
           </div>
-          {/* Post Button */}
-          <button
-            onClick={handlePostAnnouncement}
-            className="w-full bg-indigo-600 font-font text-white font-semibold py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Post Announcement
-          </button>
-        </div>
-
-        {/* Success Message */}
-        {successMessage && (
-          <div className="mt-4 p-4 bg-green-100 font-font text-green-800 rounded-md">
-            {successMessage}
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="sendToAllRoles"
+              checked={sendToAllRoles}
+              onChange={(e) => setSendToAllRoles(e.target.checked)}
+              className="h-4 w-4 text-indigo-600 font-font border-gray-300 rounded"
+            />
+            <label htmlFor="sendToAllRoles" className="ml-2 block text-sm font-font text-gray-900">
+              Send to all roles 
+            </label>
           </div>
-        )}
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 text-white px-4 py-2 rounded-md font-font shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Create Announcement
+          </button>
+        </form>
 
         {/* Announcements List */}
-        <div>
-          <h2 className="text-xl font-font font-semibold">Previous Announcements</h2>
-          {filteredAnnouncements.length === 0 ? (
-            <p>No announcements available.</p>
-          ) : (
-            <div className="mt-4 font-font space-y-4">
-              {filteredAnnouncements.map((announcement) => (
-                <div
-                  key={announcement.id}
-                  className="bg-white p-4 shadow rounded-md"
-                >
-                  <h3 className="text-lg font-font font-semibold">{announcement.title}</h3>
-                  <p className="text-sm font-font text-gray-600">{announcement.date}</p>
-                  <p className="mt-2 font-font">{announcement.content}</p>
-                </div>
-              ))}
+        <h2 className="text-xl font-semibold mt-8">Announcements</h2>
+        {announcements.length > 0 ? (
+          announcements.map((announcement) => (
+            <div
+              key={announcement.id}
+              className="bg-white p-6 shadow rounded-md mt-4 font-font cursor-pointer"
+              onClick={() => router.push(`/SuperAdmin/Announcements/${announcement.id}`)}
+            >
+              <h3 className="text-lg font-font font-semibold">{announcement.title}</h3>
+              <p className="text-sm font-font text-gray-600">
+                {new Date(announcement.date).toLocaleString()}
+              </p>
+              <p className="mt-2 font-font">{announcement.message}</p>
+              <p className="text-sm font-font text-gray-500">
+                Posted by: {announcement.createdBy} (Role: {announcement.role})
+              </p>
             </div>
-          )}
-        </div>
+          ))
+        ) : (
+          <p className="mt-4 font-font text-gray-500">No announcements available.</p>
+        )}
       </div>
-   </Sidebar>
+    </Sidebar>
   );
-};
-
-export default AnnouncementsPage;
+}

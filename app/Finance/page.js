@@ -1,131 +1,321 @@
 "use client";
-
-import {
-  ClipboardListIcon,
-  UserGroupIcon,
-  CashIcon,
-  ChartBarIcon,
-  SpeakerphoneIcon,
-  CogIcon,
-} from '@heroicons/react/outline';
 import { useEffect, useState } from "react";
-import { Protect, SignIn, SignInButton } from '@clerk/nextjs'
-import { useRouter } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
-import Sidebar from '../components/Sidebar';
+import Sidebar from "../components/Sidebar";
+import { TrendingUp, CreditCard, Wallet, Users } from "lucide-react";
+import supabase from "../lib/supabaseClient";
 
+export default function FinanceDashboard() {
+  const [stats, setStats] = useState([
+    { name: "Total Income", value: "0", icon: TrendingUp },
+    { name: "Total Expenses", value: "0", icon: CreditCard },
+    { name: "Net Profit", value: "0", icon: Wallet },
+    { name: "Employees Paid", value: "0", icon: Users },
+  ]);
 
-const actions = [
- 
-  {
-    title: 'View Financial Reports',
-    href: '/admin/finance-reports',
-    icon: ChartBarIcon,
-    iconForeground: 'text-purple-700',
-    iconBackground: 'bg-purple-50',
-  },
-  {
-    title: 'Post Announcements',
-    href: '/admin/announcements',
-    icon: SpeakerphoneIcon,
-    iconForeground: 'text-sky-700',
-    iconBackground: 'bg-sky-50',
-  },
-  {
-    title: 'Review Operating Incomes',
-    href: '/admin/operating-incomes',
-    icon: CashIcon,
-    iconForeground: 'text-yellow-700',
-    iconBackground: 'bg-yellow-50',
-  },
-  {
-    title: 'Review Non-Operating Incomes',
-    href: '/admin/non-operating-incomes',
-    icon: ClipboardListIcon,
-    iconForeground: 'text-rose-700',
-    iconBackground: 'bg-rose-50',
-  },
- 
-];
+  const quickLinks = [
+    { name: "Add Expense", href: "/Finance/Expenses/Create" },
+    { name: "Manage Expenses", href: "/Finance/Expenses/Manage" },
+    { name: "Operating Income", href: "/Finance/Incomes/Operating" },
+    { name: "Non-Operating Income", href: "/Finance/Incomes/Non" },
+  ];
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
-
-export default function SuperAdminDashboard() {
-  const [userRole, setUserRole] = useState('Finance'); // Set initial role to 'HR' for testing
-  const { user, isLoaded } = useUser();
-  const router = useRouter();
+  const [chartData, setChartData] = useState({});
+  const [selectedChart, setSelectedChart] = useState("all");
+  const [totals, setTotals] = useState({
+    totalIncome: 0,
+    totalExpenses: 0,
+    totalNonOperatingIncome: 0,
+    totalOperatingIncome: 0,
+  });
 
   useEffect(() => {
-    if (isLoaded && user?.publicMetadata?.role !== 'Finance') {
-      router.push('/sign-in');
-    }
-  }, [user, isLoaded, router]);
+    const fetchData = async () => {
+      const { data: expensesData, error: expensesError } = await supabase
+        .from("expenses")
+        .select("amount, category");
+      const { data: nonOperatingIncomes, error: nonOperatingError } =
+        await supabase.from("non_operating_incomes").select("amount, name");
+      const { data: operatingIncomes, error: operatingError } = await supabase
+        .from("operating_incomes")
+        .select("amount, name");
+      const { data: employeesPaidData, error: employeesPaidError } =
+        await supabase.from("payroll").select("id");
 
-  if (!isLoaded) {
-    return <div>Loading...</div>; // or a loading spinner
-  }
+      if (
+        expensesError ||
+        nonOperatingError ||
+        operatingError ||
+        employeesPaidError
+      ) {
+        console.error({
+          expensesError,
+          nonOperatingError,
+          operatingError,
+          employeesPaidError,
+        });
+        return;
+      }
 
-  if (user?.publicMetadata?.role !== 'Finance') {
-    return null; // or a loading spinner
-  }
-  
+      const expensesAmounts = expensesData.map((item) => item.amount);
+      const expensesCategories = expensesData.map((item) => item.category);
+      const nonOperatingAmounts = nonOperatingIncomes.map(
+        (item) => item.amount
+      );
+      const nonOperatingNames = nonOperatingIncomes.map((item) => item.name);
+      const operatingAmounts = operatingIncomes.map((item) => item.amount);
+      const operatingNames = operatingIncomes.map((item) => item.name);
+
+      const totalExpenses = expensesAmounts.reduce((a, b) => a + b, 0);
+      const totalNonOperatingIncome = nonOperatingAmounts.reduce(
+        (a, b) => a + b,
+        0
+      );
+      const totalOperatingIncome = operatingAmounts.reduce((a, b) => a + b, 0);
+      const totalIncome = totalNonOperatingIncome + totalOperatingIncome;
+      const netProfit = totalIncome - totalExpenses;
+      const employeesPaid = employeesPaidData.length;
+
+      setStats([
+        {
+          name: "Total Income",
+          value: `${totalIncome.toLocaleString()}`,
+          icon: TrendingUp,
+        },
+        {
+          name: "Total Expenses",
+          value: `${totalExpenses.toLocaleString()}`,
+          icon: CreditCard,
+        },
+        {
+          name: "Net Profit",
+          value: `${netProfit.toLocaleString()}`,
+          icon: Wallet,
+        },
+        {
+          name: "Employees Paid",
+          value: employeesPaid.toString(),
+          icon: Users,
+        },
+      ]);
+
+      setTotals({
+        totalIncome,
+        totalExpenses,
+        totalNonOperatingIncome,
+        totalOperatingIncome,
+      });
+
+      setChartData({
+        all: [
+          { name: "Expenses", value: totalExpenses },
+          { name: "Non-Operating Incomes", value: totalNonOperatingIncome },
+          { name: "Operating Incomes", value: totalOperatingIncome },
+        ].sort((a, b) => b.value - a.value),
+        expenses: expensesCategories
+          .map((category, index) => ({
+            name: category,
+            value: expensesAmounts[index],
+          }))
+          .sort((a, b) => b.value - a.value),
+        nonOperatingIncomes: nonOperatingNames
+          .map((name, index) => ({ name, value: nonOperatingAmounts[index] }))
+          .sort((a, b) => b.value - a.value),
+        operatingIncomes: operatingNames
+          .map((name, index) => ({ name, value: operatingAmounts[index] }))
+          .sort((a, b) => b.value - a.value),
+      });
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <Sidebar>
-<Protect >
-    <div className="rounded-lg bg-gray-200 overflow-hidden shadow divide-y divide-gray-200 sm:divide-y-0 sm:grid sm:grid-cols-2 sm:gap-px">
-      {actions.map((action, actionIdx) => (
-        <div
-          key={action.title}
-          className={classNames(
-            actionIdx === 0 ? 'rounded-tl-lg rounded-tr-lg sm:rounded-tr-none' : '',
-            actionIdx === 1 ? 'sm:rounded-tr-lg' : '',
-            actionIdx === actions.length - 2 ? 'sm:rounded-bl-lg' : '',
-            actionIdx === actions.length - 1 ? 'rounded-bl-lg rounded-br-lg sm:rounded-bl-none' : '',
-            'relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-500'
-          )}
-        >
-          <div>
-            <span
-              className={classNames(
-                action.iconBackground,
-                action.iconForeground,
-                'rounded-lg inline-flex p-3 ring-4 ring-white'
-              )}
+      <div className="p-12 min-h-screen bg-gray-50">
+        <h1 className="text-3xl font-semibold font-font text-gray-900 mb-6">
+          Finance Dashboard
+        </h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {stats.map((stat) => (
+            <div
+              key={stat.name}
+              className="bg-white p-5 rounded-lg shadow-lg transition-transform transform hover:scale-105"
             >
-              <action.icon className="h-6 w-6" aria-hidden="true" />
-            </span>
-          </div>
-          <div className="mt-8">
-            <h3 className="text-lg font-medium">
-              <a href={action.href} className="focus:outline-none">
-                {/* Extend touch target to entire panel */}
-                <span className="absolute inset-0" aria-hidden="true" />
-                {action.title}
-              </a>
-            </h3>
-            <p className="mt-2 text-sm text-gray-500">
-              Quickly manage or review {action.title.toLowerCase()} within the platform.
-            </p>
-          </div>
-          <span
-            className="pointer-events-none absolute top-6 right-6 text-gray-300 group-hover:text-gray-400"
-            aria-hidden="true"
-          >
-            <svg
-              className="h-6 w-6"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M20 4h1a1 1 0 00-1-1v1zm-1 12a1 1 0 102 0h-2zM8 3a1 1 0 000 2V3zM3.293 19.293a1 1 0 101.414 1.414l-1.414-1.414zM19 4v12h2V4h-2zm1-1H8v2h12V3zm-.707.293l-16 16 1.414 1.414 16-16-1.414-1.414z" />
-            </svg>
-          </span>
+              <div className="flex items-center space-x-4">
+                <stat.icon className="h-8 w-8 text-gray-600" />
+                <h2 className="text-xl font-semibold font-font text-gray-800">
+                  {stat.name}
+                </h2>
+              </div>
+              <p className="mt-4 text-3xl font-bold font-font text-gray-900">
+                {stat.value}
+              </p>
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
-    </Protect>
+        <div className="flex justify-end mb-6">
+          <select
+            value={selectedChart}
+            onChange={(e) => setSelectedChart(e.target.value)}
+            className="p-3 border-2 border-gray-300 font-font rounded-md shadow-md focus:ring-2 focus:ring-blue-500"
+          >
+            <option className="font-font" value="all">
+              All
+            </option>
+            <option className="font-font" value="expenses">
+              Expenses
+            </option>
+            <option className="font-font" value="nonOperatingIncomes">
+              Non-Operating Incomes
+            </option>
+            <option className="font-font" value="operatingIncomes">
+              Operating Incomes
+            </option>
+          </select>
+        </div>
+        <div className="grid grid-cols-1 gap-6 mb-8">
+          {selectedChart === "all" && chartData.all && (
+            <div className="bg-white p-5 rounded-lg shadow-md">
+              <h2 className="text-2xl font-semibold font-font text-gray-800 mb-4">
+                All Data
+              </h2>
+              <div className="space-y-4">
+                {chartData.all.map((data) => (
+                  <div
+                    key={data.name}
+                    className="flex justify-between items-center"
+                  >
+                    <span className="text-lg font-font text-gray-700 w-1/3">
+                      {data.name}
+                    </span>
+                    <span className="text-lg font-font text-gray-700 w-1/3 text-right">
+                      {data.value.toLocaleString()}
+                    </span>
+                    <div className="w-1/3 bg-gray-200 rounded-full h-4 ml-4">
+                      <div
+                        className="bg-one h-4 rounded-full"
+                        style={{
+                          width: `${(data.value / totals.totalIncome) * 100}%`,
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {selectedChart === "expenses" && chartData.expenses && (
+            <div className="bg-white p-5 rounded-lg shadow-md">
+              <h2 className="text-2xl font-semibold font-font text-gray-800 mb-4">
+                Expenses
+              </h2>
+              <div className="space-y-4">
+                {chartData.expenses.map((data) => (
+                  <div
+                    key={data.name}
+                    className="flex justify-between items-center"
+                  >
+                    <span className="text-lg font-font text-gray-700 w-1/3">
+                      {data.name}
+                    </span>
+                    <span className="text-lg font-font text-gray-700 w-1/3 text-right">
+                      {data.value.toLocaleString()}
+                    </span>
+                    <div className="w-1/3 bg-gray-200 rounded-full h-4 ml-4">
+                      <div
+                        className="bg-two h-4 rounded-full"
+                        style={{
+                          width: `${
+                            (data.value / totals.totalExpenses) * 100
+                          }%`,
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {selectedChart === "nonOperatingIncomes" &&
+            chartData.nonOperatingIncomes && (
+              <div className="bg-white p-5 rounded-lg shadow-md">
+                <h2 className="text-2xl font-semibold font-font text-gray-800 mb-4">
+                  Non-Operating Incomes
+                </h2>
+                <div className="space-y-4">
+                  {chartData.nonOperatingIncomes.map((data) => (
+                    <div
+                      key={data.name}
+                      className="flex justify-between items-center"
+                    >
+                      <span className="text-lg font-font text-gray-700 w-1/3">
+                        {data.name}
+                      </span>
+                      <span className="text-lg font-font text-gray-700 w-1/3 text-right">
+                        {data.value.toLocaleString()}
+                      </span>
+                      <div className="w-1/3 bg-gray-200 rounded-full h-4 ml-4">
+                        <div
+                          className="bg-green-500 h-4 rounded-full"
+                          style={{
+                            width: `${
+                              (data.value / totals.totalNonOperatingIncome) *
+                              100
+                            }%`,
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          {selectedChart === "operatingIncomes" &&
+            chartData.operatingIncomes && (
+              <div className="bg-white p-5 rounded-lg shadow-md">
+                <h2 className="text-2xl font-semibold font-font text-gray-800 mb-4">
+                  Operating Incomes
+                </h2>
+                <div className="space-y-4">
+                  {chartData.operatingIncomes.map((data) => (
+                    <div
+                      key={data.name}
+                      className="flex justify-between items-center"
+                    >
+                      <span className="text-lg font-font text-gray-700 w-1/3">
+                        {data.name}
+                      </span>
+                      <span className="text-lg font-font text-gray-700 w-1/3 text-right">
+                        {data.value.toLocaleString()}
+                      </span>
+                      <div className="w-1/3 bg-gray-200 rounded-full h-4 ml-4">
+                        <div
+                          className="bg-yellow-500 h-4 rounded-full"
+                          style={{
+                            width: `${
+                              (data.value / totals.totalOperatingIncome) * 100
+                            }%`,
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {quickLinks.map((link) => (
+            <a
+              key={link.name}
+              href={link.href}
+              className="bg-blue-500 text-white p-5 font-font rounded-lg shadow-md hover:bg-blue-600 transition-all"
+            >
+              {link.name}
+            </a>
+          ))}
+        </div>
+      </div>
     </Sidebar>
   );
 }

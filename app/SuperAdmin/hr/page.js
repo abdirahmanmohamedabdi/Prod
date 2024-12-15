@@ -26,7 +26,7 @@ export default function SuperAdminHRPage() {
       {/* Navigation */}
       <div className="mb-6 flex space-x-4">
         <Link
-          href="/SuperAdmin/hr/add"
+          href="/SuperAdmin/hr/Create"
           className="px-4 py-2 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-700"
         >
           Add Employee

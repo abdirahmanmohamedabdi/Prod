@@ -1,5 +1,5 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+import { withUt } from "uploadthing/tw";
+export default withUt({
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -12,7 +12,7 @@ module.exports = {
         'one': '#88C273',
         'two': '#1E3E62',
         'three': '#0B192C',
-        'four': '#DFF2EB',
+        'four': '#1A1A19',
        
       },
       fontFamily: {
@@ -21,4 +21,4 @@ module.exports = {
     },
   },
   plugins: [],
-};
+});

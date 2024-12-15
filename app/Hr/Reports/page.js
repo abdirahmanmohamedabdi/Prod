@@ -1,204 +1,118 @@
 "use client";
-import { useState, useEffect } from "react";
-import jsPDF from "jspdf";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { PaperClipIcon } from "@heroicons/react/solid";
 import Sidebar from "../../components/Sidebar";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import supabase from "../../lib/supabaseClient"; // Ensure correct import path
 
-const HRReportsPage = () => {
-  const [reports, setReports] = useState([]);
-  const [newReport, setNewReport] = useState({
-    title: "",
-    type: "Announcement", // Default report type
-    description: "",
-    date: new Date().toISOString().split("T")[0], // Default to current date
-    author: "Abdirahman", // Default author for testing purposes
-  });
-  const [loading, setLoading] = useState(false);
-  const [userRole, setUserRole] = useState('HR'); // Set initial role to 'HR' for testing
+export default function EmployeeDetailsPage() {
+  const { id } = useParams(); // Get the id parameter from the URL
+  const [employee, setEmployee] = useState(null); // Store the fetched employee
+  const [documents, setDocuments] = useState([]); // Store documents
+  const [loading, setLoading] = useState(true);
 
-  // Fetch reports from backend (dummy fetch for now)
   useEffect(() => {
-    const fetchReports = async () => {
-      setLoading(true);
-      try {
-        // Mock fetch response for testing purposes
-        const data = []; // Replace with your backend API endpoint
-        setReports(data);
-      } catch (error) {
-        console.error("Failed to fetch reports:", error);
-      } finally {
-        setLoading(false);
+    const fetchEmployee = async () => {
+      const { data, error } = await supabase
+        .from("employees")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching employee:", error.message);
+        toast.error("Failed to fetch employee");
+      } else {
+        setEmployee(data);
+        // Ensure fileUrl is an array
+        const fileUrls = Array.isArray(data.fileUrl) ? data.fileUrl : data.fileUrl ? data.fileUrl.split(",") : [];
+        setDocuments(fileUrls);
       }
+      setLoading(false);
     };
 
-    fetchReports();
-  }, []);
+    fetchEmployee();
+  }, [id]);
 
-  // Fetch user role and name from an API or another source
-  useEffect(() => {
-    const fetchUserRoleAndName = async () => {
-      try {
-        const response = await fetch('/api/user-role');
-        const data = await response.json();
-        setUserRole(data.role);
-        setNewReport((prev) => ({
-          ...prev,
-          author: data.name || "Abdirahman", // Use fetched name or default to "Abdirahman"
-        }));
-      } catch (error) {
-        console.error('Error fetching user role and name:', error);
-      }
-    };
+  if (loading) {
+    return (
+      <Sidebar>
+        <div className="min-h-screen bg-gray-100 p-6">
+          <ToastContainer />
+          <h1 className="text-3xl font-bold text-gray-800 mb-6">Loading...</h1>
+        </div>
+      </Sidebar>
+    );
+  }
 
-    fetchUserRoleAndName();
-  }, []);
-
-  // Handle input changes for creating a new report
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewReport((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  // Submit new report to backend (mocked for testing purposes)
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      // Mock POST response for testing purposes
-      const createdReport = { ...newReport, id: reports.length + 1 }; // Mock created report with an ID
-      setReports((prevReports) => [...prevReports, createdReport]);
-      setNewReport({
-        title: "",
-        type: "Announcement",
-        description: "",
-        date: new Date().toISOString().split("T")[0],
-        author: "Abdirahman",
-      }); // Reset form
-    } catch (error) {
-      console.error("Error posting report:", error);
-    }
-  };
-
-  // Generate PDF using jsPDF
-  const generatePDF = (report) => {
-    const doc = new jsPDF();
-    doc.setFont("Helvetica", "bold");
-    doc.setFontSize(16);
-    doc.text(report.title, 10, 20);
-
-    doc.setFontSize(12);
-    doc.text(`Type: ${report.type}`, 10, 30);
-    doc.text(`Author: ${report.author}`, 10, 40);
-    doc.text(`Date: ${report.date}`, 10, 50);
-
-    doc.setFont("Helvetica", "normal");
-    doc.text("Description:", 10, 60);
-    doc.text(report.description, 10, 70, { maxWidth: 180 });
-
-    doc.save(`${report.title}.pdf`);
-  };
+  if (!employee) {
+    return (
+      <Sidebar>
+        <div className="min-h-screen bg-gray-100 p-6">
+          <ToastContainer />
+          <h1 className="text-3xl font-bold text-gray-800 mb-6">Employee not found</h1>
+        </div>
+      </Sidebar>
+    );
+  }
 
   return (
     <Sidebar>
-      <div className="p-6 space-y-6">
-        <h1 className="text-2xl font-semibold">HR Reports</h1>
-
-        {/* New Report Form */}
-        <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 shadow rounded-md">
-          <h2 className="text-xl font-font font-semibold">Create New Report</h2>
-          <div className="space-y-2">
-            <label className="block text-sm font-font font-medium">Report Title</label>
-            <input
-              type="text"
-              name="title"
-              value={newReport.title}
-              onChange={handleInputChange}
-              className="w-full p-2 border rounded-md"
-              placeholder="Enter report title"
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="block text-sm font-font font-medium">Report Type</label>
-            <select
-              name="type"
-              value={newReport.type}
-              onChange={handleInputChange}
-              className="w-full p-2 border rounded-md"
-            >
-              <option value="Announcement">Announcement</option>
-              <option value="Warning">Warning</option>
-              <option value="Performance">Performance Review</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          <div className="space-y-2">
-            <label className="block text-sm font-font font-medium">Description</label>
-            <textarea
-              name="description"
-              value={newReport.description}
-              onChange={handleInputChange}
-              className="w-full p-2 border rounded-md"
-              rows="4"
-              placeholder="Enter report description"
-              required
-            ></textarea>
-          </div>
-          <div className="space-y-2">
-            <label className="block text-sm font-font font-medium">Date</label>
-            <input
-              type="date"
-              name="date"
-              value={newReport.date}
-              onChange={handleInputChange}
-              className="w-full p-2 border rounded-md"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-one text-white font-font p-2 rounded-md hover:bg-blue-700"
-          >
-            Submit Report
-          </button>
-        </form>
-
-        {/* Reports List */}
-        <div>
-          <h2 className="text-xl font-font font-semibold">Existing Reports</h2>
-          {loading ? (
-            <p>Loading reports...</p>
-          ) : reports.length === 0 ? (
-            <p>No reports available.</p>
-          ) : (
-            <div className="mt-4 space-y-4">
-              {reports.map((report) => (
-                <div
-                  key={report.id}
-                  className="bg-white p-4 shadow rounded-md flex justify-between items-start"
-                >
-                  <div>
-                    <h3 className="text-lg font-font font-semibold">{report.title}</h3>
-                    <p className="text-sm font-font text-gray-600">Type: {report.type}</p>
-                    <p className="text-sm font-font text-gray-600">Author: {report.author}</p>
-                    <p className="text-sm font-font text-gray-600">Date: {report.date}</p>
-                    <p className="mt-2 font-font">{report.description}</p>
-                  </div>
-                  <button
-                    onClick={() => generatePDF(report)}
-                    className="bg-one text-white font-font px-4 py-2 rounded-md hover:bg-blue-700"
-                  >
-                    Export as PDF
-                  </button>
-                </div>
-              ))}
+      <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div className="px-4 py-5 sm:px-6">
+          <h3 className="text-lg leading-6 font-font font-medium text-gray-900">Employee Information</h3>
+          <p className="mt-1 max-w-2xl text-sm font-font text-gray-500">Personal details and application.</p>
+        </div>
+        <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
+          <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+            <div className="sm:col-span-1">
+              <dt className="text-sm font-medium font-font text-gray-500">Employee ID</dt>
+              <dd className="mt-1 text-sm font-font text-gray-900">{employee.employeeId}</dd>
             </div>
-          )}
+            <div className="sm:col-span-1">
+              <dt className="text-sm font-medium font-font text-gray-500">Full name</dt>
+              <dd className="mt-1 text-sm font-font text-gray-900">{employee.firstName} {employee.secondName}</dd>
+            </div>
+            <div className="sm:col-span-2">
+              <dt className="text-sm font-medium font-font text-gray-500">Files</dt>
+              <dd className="mt-1 text-sm text-gray-900">
+                <ul role="list" className="border border-gray-200 rounded-md divide-y divide-gray-200">
+                  {documents.map((doc, index) => (
+                    <li key={index} className="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
+                      <div className="w-0 flex-1 flex items-center">
+                        <PaperClipIcon className="flex-shrink-0 h-5 w-5 text-gray-400" aria-hidden="true" />
+                        <span className="ml-2 flex-1 w-0 font-medium truncate">{`Document ${index + 1}`}</span>
+                      </div>
+                      <div className="ml-4 flex-shrink-0">
+                        <a
+                          href={doc}
+                          className="font-medium text-indigo-600 hover:text-indigo-500"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            const link = document.createElement('a');
+                            link.href = doc;
+                            link.download = `Document_${index + 1}.pdf`;
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                          }}
+                        >
+                          Download
+                        </a>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </dd>
+            </div>
+          </dl>
         </div>
       </div>
     </Sidebar>
   );
-};
-
-export default HRReportsPage;
+}
