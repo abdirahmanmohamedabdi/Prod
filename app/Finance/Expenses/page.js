@@ -1,40 +1,30 @@
 "use client";
-
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import supabase from '../../lib/supabaseClient'; // Ensure correct import path
 import { useUser } from "@clerk/nextjs"; // Ensure correct import path
-import { UploadButton } from "@uploadthing/react"; // Ensure correct import path
+import { UploadButton } from "@uploadthing/react";
 import jsPDF from 'jspdf';
 import 'jspdf-autotable'; // Import the plugin
+import { MoreHorizontal } from 'lucide-react';
 
 const ExpensesPage = () => {
   const { user } = useUser();
   const [expenses, setExpenses] = useState([]);
   const [filterCategory, setFilterCategory] = useState("All");
   const [filterDate, setFilterDate] = useState("");
+  const [actionMenuOpen, setActionMenuOpen] = useState(null);
 
   useEffect(() => {
     const fetchExpenses = async () => {
       try {
-        const { data: operatingExpenses, error: operatingError } = await supabase.from('operating_expenses').select('*');
-        if (operatingError) {
-          throw operatingError;
+        const { data, error } = await supabase.from('expenses').select('*');
+        if (error) {
+          throw error;
         }
-
-        const { data: nonOperatingExpenses, error: nonOperatingError } = await supabase.from('non_operating_expenses').select('*');
-        if (nonOperatingError) {
-          throw nonOperatingError;
-        }
-
-        // Add type to each expense
-        const combinedExpenses = [
-          ...operatingExpenses.map(expense => ({ ...expense, type: 'Operating' })),
-          ...nonOperatingExpenses.map(expense => ({ ...expense, type: 'Non-Operating' }))
-        ];
-        setExpenses(combinedExpenses);
+        setExpenses(data);
       } catch (error) {
         console.error('Error fetching expenses:', error);
         toast.error('Failed to fetch expenses');
@@ -42,7 +32,19 @@ const ExpensesPage = () => {
     };
 
     fetchExpenses();
-  }, [user]);
+  }, []);
+
+  const filteredExpenses = expenses.filter((expense) => {
+    return (
+      (filterCategory === "All" || expense.category === filterCategory) &&
+      (filterDate ? expense.date.includes(filterDate) : true)
+    );
+  });
+
+  const totalAmount = filteredExpenses.reduce(
+    (total, expense) => total + parseFloat(expense.amount),
+    0
+  );
 
   const generatePDF = () => {
     const doc = new jsPDF('p', 'pt', 'a4', true); // Portrait, points, A4 size, compress
@@ -82,7 +84,6 @@ const ExpensesPage = () => {
       ]);
 
       // Add Total Row
-      const totalAmount = filteredExpenses.reduce((total, expense) => total + parseFloat(expense.amount), 0);
       tableRows.push(['Total', totalAmount.toLocaleString(), '', '', '', '']);
 
       // Table Styling and Rendering
@@ -128,22 +129,25 @@ const ExpensesPage = () => {
         },
       });
 
-      // Save the PDF
-      doc.save(`expenses_reports_${currentDate}.pdf`);
+      // Save the PDF with a random alphanumeric string in the filename
+      handleSaveDocument(doc);
     };
   };
 
-  const filteredExpenses = expenses.filter((expense) => {
-    return (
-      (filterCategory === "All" || expense.category === filterCategory) &&
-      (filterDate ? expense.date.includes(filterDate) : true)
-    );
-  });
+  const handleSaveDocument = (doc) => {
+    const currentDate = new Date().toISOString().slice(0, 10); // Format: YYYY-MM-DD
+    
+    // Function to generate a random alphanumeric string
+    const generateRandomString = (length = 6) => {
+      const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      return Array.from({ length }, () => characters[Math.floor(Math.random() * characters.length)]).join("");
+    };
 
-  const totalAmount = filteredExpenses.reduce(
-    (total, expense) => total + parseFloat(expense.amount),
-    0
-  );
+    const randomString = generateRandomString(); // Generate 6-character random string
+    const fileName = `expenses_report_${randomString}_${currentDate}.pdf`;
+
+    doc.save(fileName);
+  };
 
   const handleUploadComplete = async (res) => {
     try {
@@ -160,10 +164,10 @@ const ExpensesPage = () => {
         throw error;
       }
 
-      toast.success('File uploaded successfully');
+      toast.success('Report uploaded successfully');
     } catch (error) {
-      console.error('Error uploading file:', error);
-      toast.error('Failed to upload file');
+      console.error('Error uploading report:', error);
+      toast.error('Failed to upload report');
     }
   };
 
@@ -174,65 +178,51 @@ const ExpensesPage = () => {
 
         {/* Filters */}
         <div className="flex space-x-4 mt-8">
+         
           <div>
-            <label className="block text-sm font-font font-medium">Filter by Category</label>
-            <select
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-              className="mt-1 p-2 border rounded-md"
-            >
-              <option value="All">All</option>
-              <option value="Operating">Operating</option>
-              <option value="Non-Operating">Non-Operating</option>
-              <option value="Operating Expense">Operating Expense</option>
-              <option value="Non-Operating Expense">Non-Operating Expense</option>
-            </select>
-          </div>
-          <div>
-            <label className="block font-font text-sm font-medium">Filter by Date</label>
+            <label className="block text-sm font-medium">Filter by Date</label>
             <input
               type="month"
               value={filterDate}
               onChange={(e) => setFilterDate(e.target.value)}
-              className="mt-1 p-2 border rounded-md"
+              className="mt-1 p-2 border rounded-md w-full"
             />
           </div>
         </div>
 
         {/* Expenses Table */}
         <div className="mt-8">
-          <h3 className="text-xl font-font font-semibold">Expenses List</h3>
-          <div className="align-middle inline-block min-w-full shadow overflow-hidden bg-white shadow-dashboard px-8 pt-3 rounded-bl-lg rounded-br-lg">
-            <table className="min-w-full">
-              <thead>
+          <h3 className="text-xl font-font font-semibold mb-4">Expenses List</h3>
+          <div className="overflow-x-auto rounded-lg shadow-lg">
+            <table className="min-w-full bg-white border border-gray-200">
+              <thead className="bg-gray-100">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-font font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300">Category</th>
-                  <th className="px-6 py-3 text-left text-xs font-font font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300">Amount (Ksh)</th>
-                  <th className="px-6 py-3 text-left text-xs font-font font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300">Description</th>
-                  <th className="px-6 py-3 text-left text-xs font-font font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300">Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-font font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300">Confirmation Message</th>
-                  <th className="px-6 py-3 text-left text-xs font-font font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300">Created At</th>
+                  <th className="px-6 py-4 text-left text-sm font-medium font-font text-gray-600 border border-gray-200">Category</th>
+                  <th className="px-6 py-4 text-left text-sm font-medium font-font text-gray-600 border border-gray-200">Amount (Ksh)</th>
+                  <th className="px-6 py-4 text-left text-sm font-medium font-font text-gray-600 border border-gray-200">Description</th>
+                  <th className="px-6 py-4 text-left text-sm font-medium font-font text-gray-600 border border-gray-200">Date</th>
+                  <th className="px-6 py-4 text-left text-sm font-medium font-font text-gray-600 border border-gray-200">Confirmation Message</th>
+                  <th className="px-6 py-4 text-left text-sm font-medium font-font text-gray-600 border border-gray-200">Created At</th>
+
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody>
                 {filteredExpenses.map((expense, index) => (
-                  <tr key={expense.id} className={`hover:bg-gray-100 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`}>
-                    <td className="px-6 py-4 whitespace-no-wrap text-sm font-font text-blue-900">{expense.category}</td>
-                    <td className="px-6 py-4 whitespace-no-wrap text-sm font-font text-blue-900">{expense.amount.toLocaleString()}</td>
-                    <td className="px-6 py-4 whitespace-no-wrap text-sm font-font text-blue-900">{expense.description}</td>
-                    <td className="px-6 py-4 whitespace-no-wrap text-sm font-font text-blue-900">{new Date(expense.date).toLocaleDateString()}</td>
-                    <td className="px-6 py-4 whitespace-no-wrap text-sm font-font text-blue-900">{expense.confirmation_message}</td>
-                    <td className="px-6 py-4 whitespace-no-wrap text-sm font-font text-blue-900">{new Date(expense.created_at).toLocaleDateString()}</td>
+                  <tr key={expense.id} className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}>
+                    <td className="px-6 py-6 text-sm text-gray-700  font-font border border-gray-200">{expense.category}</td>
+                    <td className="px-6 py-6 text-sm text-gray-700 font-font border border-gray-200">{expense.amount.toLocaleString()}</td>
+                    <td className="px-6 py-6 text-sm text-gray-700 font-font border border-gray-200">{expense.description}</td>
+                    <td className="px-6 py-6 text-sm text-gray-700 font-font border border-gray-200">{new Date(expense.date).toLocaleDateString()}</td>
+                    <td className="px-6 py-6 text-sm text-gray-700 font-font border border-gray-200">{expense.confirmation_message}</td>
+                    <td className="px-6 py-6 text-sm text-gray-700 font-font border border-gray-200">{new Date(expense.created_at).toLocaleDateString()}</td>
+                    
                   </tr>
                 ))}
                 {/* Total Expenses Row */}
                 <tr className="bg-green-100">
-                  <td className="border font-font p-2 font-bold">Total</td>
-                  <td className="border font-font p-2 font-bold">{totalAmount.toLocaleString()}</td>
-                  <td className="border font-font p-2"></td>
-                  <td className="border font-font p-2"></td>
-                  <td className="border font-font p-2"></td>
-                  <td className="border font-font p-2"></td>
+                  <td className="px-6 py-6 text-sm font-font font-semibold border border-gray-200">Total</td>
+                  <td className="px-6 py-6 text-sm font-font font-semibold border border-gray-200">{totalAmount.toLocaleString()}</td>
+                  <td className="px-6 py-6 border border-gray-200" colSpan="5"></td>
                 </tr>
               </tbody>
             </table>

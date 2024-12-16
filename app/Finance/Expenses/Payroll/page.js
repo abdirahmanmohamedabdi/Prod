@@ -203,12 +203,12 @@ export default function Payroll() {
 
   return (
     <Sidebar>
-      <div className="p-6">
+      <div className="p-6 space-y-8">
         <ToastContainer />
-        <h1 className="text-2xl font-bold mb-6">Payroll System</h1>
-        <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 font-font shadow rounded-md">
+        <h1 className="text-3xl font-bold mb-6">Payroll System</h1>
+        <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 shadow rounded-md">
           <div>
-            <label htmlFor="searchEmployee" className="block text-sm font-font font-medium text-gray-700">
+            <label htmlFor="searchEmployee" className="block text-sm font-medium text-gray-700">
               Search Employee
             </label>
             <input
@@ -217,7 +217,7 @@ export default function Payroll() {
               placeholder="Search by name"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-3 py-2 font-font border border-gray-300 rounded-md"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
             />
             {searchQuery && (
               <ul className="border border-gray-300 rounded-md mt-2 max-h-40 overflow-y-auto">
@@ -233,114 +233,118 @@ export default function Payroll() {
               </ul>
             )}
           </div>
-          <div>
-            <label htmlFor="payDate" className="block text-sm  font-font font-medium text-gray-700">
-              Pay Date
-            </label>
-            <input
-              type="date"
-              id="payDate"
-              value={payDate}
-              onChange={(e) => setPayDate(e.target.value)}
-              className="w-full px-3 py-2 border font-font border-gray-300 rounded-md"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="amount" className="block font-font text-sm font-medium text-gray-700">
-              Amount
-            </label>
-            <input
-              type="number"
-              id="amount"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              required
-              disabled={!isEditable}
-            />
-          </div>
-          <div>
-            <label htmlFor="socialSecurity" className="block text-sm font-medium font-font text-gray-700">
-              Social Security
-            </label>
-            <input
-              type="number"
-              id="socialSecurity"
-              value={socialSecurity}
-              onChange={(e) => setSocialSecurity(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              required
-              disabled={!isEditable}
-            />
-          </div>
-          <div>
-            <label htmlFor="nhif" className="block text-sm font-font font-medium text-gray-700">
-              NHIF
-            </label>
-            <input
-              type="number"
-              id="nhif"
-              value={nhif}
-              onChange={(e) => setNhif(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 font-font rounded-md"
-              required
-              disabled={!isEditable}
-            />
-          </div>
-          <div>
-            <label htmlFor="otherExpenses" className="block text-sm font-font font-medium text-gray-700">
-              Other Expenses
-            </label>
-            <input
-              type="number"
-              id="otherExpenses"
-              value={otherExpenses}
-              onChange={(e) => setOtherExpenses(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              required
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label htmlFor="payDate" className="block text-sm font-medium text-gray-700">
+                Pay Date
+              </label>
+              <input
+                type="date"
+                id="payDate"
+                value={payDate}
+                onChange={(e) => setPayDate(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
+                Amount
+              </label>
+              <input
+                type="number"
+                id="amount"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                required
+                disabled={!isEditable}
+              />
+            </div>
+            <div>
+              <label htmlFor="socialSecurity" className="block text-sm font-medium text-gray-700">
+                Social Security
+              </label>
+              <input
+                type="number"
+                id="socialSecurity"
+                value={socialSecurity}
+                onChange={(e) => setSocialSecurity(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                required
+                disabled={!isEditable}
+              />
+            </div>
+            <div>
+              <label htmlFor="nhif" className="block text-sm font-medium text-gray-700">
+                NHIF
+              </label>
+              <input
+                type="number"
+                id="nhif"
+                value={nhif}
+                onChange={(e) => setNhif(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                required
+                disabled={!isEditable}
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label htmlFor="otherExpenses" className="block text-sm font-medium text-gray-700">
+                Other Expenses
+              </label>
+              <input
+                type="number"
+                id="otherExpenses"
+                value={otherExpenses}
+                onChange={(e) => setOtherExpenses(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                required
+              />
+            </div>
           </div>
           <button
             type="submit"
-            className="w-full bg-indigo-600 text-white px-4 py-2 font-font rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="w-full bg-indigo-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             Add Payroll
           </button>
         </form>
         <div className="mt-8">
-          <h2 className="text-xl font-bold font-font mb-4">Payroll Records</h2>
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-font font-medium text-gray-500 uppercase tracking-wider">Employee</th>
-                <th className="px-6 py-3 text-left text-xs font-font font-medium text-gray-500 uppercase tracking-wider">Pay Date</th>
-                <th className="px-6 py-3 text-left text-xs font-font font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                <th className="px-6 py-3 text-left text-xs font-font font-medium text-gray-500 uppercase tracking-wider">Social Security</th>
-                <th className="px-6 py-3 text-left text-xs font-font font-medium text-gray-500 uppercase tracking-wider">NHIF</th>
-                <th className="px-6 py-3 text-left text-xs font-font font-medium text-gray-500 uppercase tracking-wider">Other Expenses</th>
-                <th className="px-6 py-3 text-left text-xs font-font font-medium text-gray-500 uppercase tracking-wider">Balance Pending</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {payrolls.map((payroll) => {
-                const employee = employees.find((employee) => employee.id === payroll.employee_id);
-                return (
-                  <tr key={payroll.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {employee?.firstName} {employee?.secondName}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap font-font text-sm text-gray-500">{payroll.pay_date}</td>
-                    <td className="px-6 py-4 whitespace-nowrap font-font text-sm text-gray-500">{payroll.amount}</td>
-                    <td className="px-6 py-4 whitespace-nowrap font-font text-sm text-gray-500">{payroll.social_security}</td>
-                    <td className="px-6 py-4 whitespace-nowrap font-font text-sm text-gray-500">{payroll.nhif}</td>
-                    <td className="px-6 py-4 whitespace-nowrap font-font text-sm text-gray-500">{payroll.other_expenses}</td>
-                    <td className="px-6 py-4 whitespace-nowrap font-font text-sm text-gray-500">{calculateBalance(payroll.employee_id)}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <h2 className="text-2xl font-bold mb-4">Payroll Records</h2>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pay Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Social Security</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NHIF</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Other Expenses</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Balance Pending</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {payrolls.map((payroll) => {
+                  const employee = employees.find((employee) => employee.id === payroll.employee_id);
+                  return (
+                    <tr key={payroll.id}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {employee?.firstName} {employee?.secondName}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{payroll.pay_date}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{payroll.amount}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{payroll.social_security}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{payroll.nhif}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{payroll.other_expenses}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{calculateBalance(payroll.employee_id)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </Sidebar>

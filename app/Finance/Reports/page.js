@@ -1,21 +1,22 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useUser } from "@clerk/nextjs";
 import supabase from "../../lib/supabaseClient";
-import { SortAsc, SortDesc, Download, Filter, XCircle, MoreHorizontal } from "lucide-react";
+import { SortAsc, SortDesc, Download, Filter, MoreHorizontal, XCircle } from "lucide-react";
 import Sidebar from "../../components/Sidebar";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function FinancialReportsPage() {
+  const { user } = useUser();
   const [reports, setReports] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: "created_at", direction: "ascending" });
-  const { user } = useUser();
-  const [editingReportId, setEditingReportId] = useState(null);
-  const [newReportName, setNewReportName] = useState("");
   const [filters, setFilters] = useState({ uploadedBy: "", startDate: "", endDate: "", reportType: "" });
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [uploadedByOptions, setUploadedByOptions] = useState([]);
   const [reportTypeOptions, setReportTypeOptions] = useState([]);
   const [actionMenuOpen, setActionMenuOpen] = useState(null);
+  const actionMenuRef = useRef(null);
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -50,6 +51,19 @@ export default function FinancialReportsPage() {
     fetchReports();
     fetchFilterOptions();
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (actionMenuRef.current && !actionMenuRef.current.contains(event.target)) {
+        setActionMenuOpen(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [actionMenuRef]);
 
   const applyFilters = () => {
     let filteredReports = [...reports];
@@ -96,31 +110,7 @@ export default function FinancialReportsPage() {
   };
 
   const handleEdit = (report) => {
-    setEditingReportId(report.id);
-    setNewReportName(report.name);
-    setActionMenuOpen(null);
-  };
-
-  const handleSave = async (reportId) => {
-    const { error } = await supabase
-      .from("financial_reports")
-      .update({ name: newReportName })
-      .eq("id", reportId);
-
-    if (error) {
-      console.error("Error updating report:", error);
-    } else {
-      setReports((prev) =>
-        prev.map((report) =>
-          report.id === reportId ? { ...report, name: newReportName } : report
-        )
-      );
-      setEditingReportId(null);
-    }
-  };
-
-  const handleCancel = () => {
-    setEditingReportId(null);
+    // Implement edit functionality
   };
 
   const handleDelete = async (id) => {
@@ -130,7 +120,6 @@ export default function FinancialReportsPage() {
       console.error("Error deleting report:", error);
     } else {
       setReports((prev) => prev.filter((report) => report.id !== id));
-      setActionMenuOpen(null);
     }
   };
 
@@ -348,32 +337,12 @@ export default function FinancialReportsPage() {
                         <td className="py-6 pr-8">
                           <div className="flex items-center">
                             <div>
-                              {editingReportId === report.id ? (
-                                <div className="flex items-center">
-                                  <input
-                                    type="text"
-                                    value={newReportName}
-                                    onChange={(e) => setNewReportName(e.target.value)}
-                                    className="border rounded px-2 py-1 w-full mr-2 focus:ring-2 focus:ring-blue-500"
-                                  />
-                                  <button
-                                    onClick={() => handleSave(report.id)}
-                                    className="text-blue-600 font-medium hover:underline mr-2"
-                                  >
-                                    Save
-                                  </button>
-                                  <button
-                                    onClick={handleCancel}
-                                    className="text-gray-500 hover:underline"
-                                  >
-                                    Cancel
-                                  </button>
-                                </div>
-                              ) : (
-                                <div className="font-medium font-font text-four text-gray-900">
-                                  {report.name}
-                                </div>
-                              )}
+                              <div
+                                className="font-medium font-font text-four text-gray-900 cursor-pointer"
+                                onClick={() => window.open(report.url, '_blank')}
+                              >
+                                {report.name}
+                              </div>
                             </div>
                           </div>
                         </td>
@@ -387,21 +356,32 @@ export default function FinancialReportsPage() {
                         </td>
                         <td className="py-6 font-medium text-right whitespace-nowrap flex items-center justify-end space-x-4 relative">
                           <button
-                            onClick={() => setActionMenuOpen(report.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActionMenuOpen(report.id);
+                            }}
                             className="text-gray-500 hover:text-gray-700"
                           >
                             <MoreHorizontal className="h-5 w-5" aria-hidden="true" />
                           </button>
                           {actionMenuOpen === report.id && (
-                            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                            <div ref={actionMenuRef} className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10">
                               <button
-                                onClick={() => handleEdit(report)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleEdit(report);
+                                  setActionMenuOpen(null);
+                                }}
                                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                               >
                                 Edit
                               </button>
                               <button
-                                onClick={() => handleDelete(report.id)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDelete(report.id);
+                                  setActionMenuOpen(null);
+                                }}
                                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                               >
                                 Delete
@@ -411,7 +391,10 @@ export default function FinancialReportsPage() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                onClick={() => setActionMenuOpen(null)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setActionMenuOpen(null);
+                                }}
                               >
                                 Download
                               </a>

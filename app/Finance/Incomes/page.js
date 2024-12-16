@@ -139,7 +139,7 @@ const IncomesPage = () => {
 
   const filteredIncomes = incomes.filter((income) => {
     return (
-      (filterCategory === "All" || income.category === filterCategory) &&
+      (filterCategory === "All" || income.type === filterCategory) &&
       (filterDate ? income.date.includes(filterDate) : true)
     );
   });
@@ -179,70 +179,64 @@ const IncomesPage = () => {
         {/* Filters */}
         <div className="flex space-x-4 mt-8">
           <div>
-            <label className="block text-sm font-font font-medium">Filter by Category</label>
+            <label className="block text-sm font-medium">Filter by Category</label>
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
-              className="mt-1 p-2 border rounded-md"
+              className="mt-1 p-2 border rounded-md w-full"
             >
               <option value="All">All</option>
               <option value="Operating">Operating</option>
               <option value="Non-Operating">Non-Operating</option>
-              <option value="Operating Income">Operating Income</option>
-              <option value="Non-Operating Income">Non-Operating Income</option>
             </select>
           </div>
           <div>
-            <label className="block font-font text-sm font-medium">Filter by Date</label>
+            <label className="block text-sm font-medium">Filter by Date</label>
             <input
               type="month"
               value={filterDate}
               onChange={(e) => setFilterDate(e.target.value)}
-              className="mt-1 p-2 border rounded-md"
+              className="mt-1 p-2 border rounded-md w-full"
             />
           </div>
         </div>
 
         {/* Incomes Table */}
         <div className="mt-8">
-          <h3 className="text-xl font-font font-semibold">Incomes List</h3>
-          <div className="align-middle inline-block min-w-full shadow overflow-hidden bg-white shadow-dashboard px-8 pt-3 rounded-bl-lg rounded-br-lg">
-            <table className="min-w-full">
-              <thead>
+          <h3 className="text-xl font-font font-semibold mb-4">Incomes List</h3>
+          <div className="overflow-x-auto rounded-lg shadow-lg">
+            <table className="min-w-full bg-white border border-gray-200">
+              <thead className="bg-gray-100">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-font font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-font font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300">Amount (Ksh)</th>
-                  <th className="px-6 py-3 text-left text-xs font-font font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300">Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-font font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300">Term</th>
-                  <th className="px-6 py-3 text-left text-xs font-font font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300">Uploaded By</th>
-                  <th className="px-6 py-3 text-left text-xs font-font font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300">Payment Method</th>
-                  <th className="px-6 py-3 text-left text-xs font-font font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300">Confirmation Message</th>
-                  <th className="px-6 py-3 text-left text-xs font-font font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300">Type</th>
+                  <th className="px-6 py-4 text-left text-sm font-medium font-font text-gray-600 border border-gray-200">Name</th>
+                  <th className="px-6 py-4 text-left text-sm font-medium font-font text-gray-600 border border-gray-200">Amount (Ksh)</th>
+                  <th className="px-6 py-4 text-left text-sm font-medium font-font text-gray-600 border border-gray-200">Date</th>
+                  <th className="px-6 py-4 text-left text-sm font-medium  font-font text-gray-600 border border-gray-200">Term</th>
+                  <th className="px-6 py-4 text-left text-sm font-medium font-font text-gray-600 border border-gray-200">Uploaded By</th>
+                  <th className="px-6 py-4 text-left text-sm font-medium font-font text-gray-600 border border-gray-200">Payment Method</th>
+                  <th className="px-6 py-4 text-left text-sm font-medium font-font text-gray-600 border border-gray-200">Confirmation Message</th>
+                  <th className="px-6 py-4 text-left text-sm font-medium font-font text-gray-600 border border-gray-200">Type</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody>
                 {filteredIncomes.map((income, index) => (
-                  <tr key={income.id} className={`hover:bg-gray-100 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`}>
-                    <td className="px-6 py-4 whitespace-no-wrap text-sm font-font text-blue-900">{income.name}</td>
-                    <td className="px-6 py-4 whitespace-no-wrap text-sm font-font text-blue-900">{income.amount.toLocaleString()}</td>
-                    <td className="px-6 py-4 whitespace-no-wrap text-sm font-font text-blue-900">{new Date(income.date).toLocaleDateString()}</td>
-                    <td className="px-6 py-4 whitespace-no-wrap text-sm font-font text-blue-900">{income.term}</td>
-                    <td className="px-6 py-4 whitespace-no-wrap text-sm font-font text-blue-900">{income.uploaded_by}</td>
-                    <td className="px-6 py-4 whitespace-no-wrap text-sm font-font text-blue-900">{income.payment_method}</td>
-                    <td className="px-6 py-4 whitespace-no-wrap text-sm font-font text-blue-900">{income.confirmation_message}</td>
-                    <td className="px-6 py-4 whitespace-no-wrap text-sm font-font text-blue-900">{income.type}</td>
+                  <tr key={income.id} className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}>
+                    <td className="px-6 py-6 text-sm text-gray-700  font-font border border-gray-200">{income.name}</td>
+                    <td className="px-6 py-6 text-sm text-gray-700 font-font border border-gray-200">{income.amount.toLocaleString()}</td>
+                    <td className="px-6 py-6 text-sm text-gray-700 font-font border border-gray-200">{new Date(income.date).toLocaleDateString()}</td>
+                    <td className="px-6 py-6 text-sm text-gray-700 font-font border border-gray-200">{income.term}</td>
+                    <td className="px-6 py-6 text-sm text-gray-700 font-font border border-gray-200">{income.uploaded_by}</td>
+                    <td className="px-6 py-6 text-sm text-gray-700 font-font border border-gray-200">{income.payment_method}</td>
+                    <td className="px-6 py-6 text-sm text-gray-700 font-font border border-gray-200">{income.confirmation_message}</td>
+                    <td className="px-6 py-6 text-sm text-gray-700 font-font border border-gray-200">{income.type}</td>
                   </tr>
                 ))}
+
                 {/* Total Incomes Row */}
                 <tr className="bg-green-100">
-                  <td className="border font-font p-2 font-bold">Total</td>
-                  <td className="border font-font p-2 font-bold">{totalAmount.toLocaleString()}</td>
-                  <td className="border font-font p-2"></td>
-                  <td className="border font-font p-2"></td>
-                  <td className="border font-font p-2"></td>
-                  <td className="border font-font p-2"></td>
-                  <td className="border font-font p-2"></td>
-                  <td className="border font-font p-2"></td>
+                  <td className="px-6 py-6 text-sm font-font font-semibold border border-gray-200">Total</td>
+                  <td className="px-6 py-6 text-sm font-font font-semibold border border-gray-200">{totalAmount.toLocaleString()}</td>
+                  <td className="px-6 py-6 border border-gray-200" colSpan="6"></td>
                 </tr>
               </tbody>
             </table>
